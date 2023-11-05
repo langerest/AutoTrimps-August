@@ -1,7 +1,7 @@
 var atSettings = {
 	initialise: {
 		version: '',
-		basepath: 'https://SadAugust.github.io/AutoTrimps/',
+		basepath: 'https://langerest.github.io/AutoTrimps-August/',
 		loaded: false,
 	},
 	modules: {
