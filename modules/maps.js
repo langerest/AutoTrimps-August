@@ -395,22 +395,17 @@ function shouldFarmMapCreation(level, special, biome) {
 	else return 'create';
 }
 
-
 //Decide whether or not to abandon trimps for mapping
 function shouldAbandon() {
-	if (getPageSetting('autoAbandon') === 0) return false;
-	if (getPageSetting('autoAbandon') === 1) return true;
-	if (getPageSetting('autoAbandon') === 2) {
-		if (game.resources.trimps.realMax() > game.resources.trimps.owned + 1) {
-			if (mapSettings.mapName === 'Void Map' && game.global.lastClearedCell >= 90) return true;
-			return false;
-		}
-		if (game.global.spireActive) return false;
-		if (mapSettings.mapName === 'Map Bonus' && game.global.lastClearedCell >= 50) return false;
+	const setting = getPageSetting('autoAbandon');
+	if (setting === 0)
+		return false;
+	else if (setting === 1)
 		return true;
-	}
-	//Fail safe
-	return false;
+	else if (setting === 2 && (game.global.soldierHealth === 0 || newArmyRdy() || getCurrentWorldCell().level + Math.max(0, maxOneShotPower(true) - 1) >= 100))
+		return true;
+	else
+		return false;
 }
 
 function autoMap() {
@@ -644,12 +639,10 @@ function autoMap() {
 	} else if (!game.global.preMapsActive && !game.global.mapsActive) {
 		//Going to map chamber. Will override default 'Auto Abandon' setting if AT wants to map!
 		if (selectedMap !== 'world') {
-			if (!game.global.switchToMaps) {
+			if (!game.global.switchToMaps && shouldAbandon())
 				mapsClicked();
-			}
-			if (game.global.switchToMaps && shouldAbandon()) {
+			if (game.global.switchToMaps)
 				mapsClicked();
-			}
 		}
 		//Creating Maps
 	} else if (game.global.preMapsActive) {
