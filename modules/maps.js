@@ -639,9 +639,9 @@ function autoMap() {
 	} else if (!game.global.preMapsActive && !game.global.mapsActive) {
 		//Going to map chamber. Will override default 'Auto Abandon' setting if AT wants to map!
 		if (selectedMap !== 'world') {
-			if (!game.global.switchToMaps)
+			if (!game.global.switchToMaps && shouldAbandon())
 				mapsClicked();
-			if (game.global.switchToMaps && shouldAbandon())
+			if (game.global.switchToMaps)
 				mapsClicked();
 		}
 		//Creating Maps
