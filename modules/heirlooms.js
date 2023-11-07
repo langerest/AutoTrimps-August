@@ -270,13 +270,16 @@ function heirloomShieldToEquip(mapType, swapLooms, hdCheck = true) {
 		//Disable Shield swapping if on a dontSwap challenge and our army is still fighting or has health remaining.
 		if (dontSwap && (game.global.fighting || game.global.soldierHealthRemaining > 0))
 			return;
+		//Disable shield swapping depending on auto abandon setting
+		if (!shouldAbandon(false))
+			return;
 		//Disable plagueSwap variable if we are querying a map
 		if (mapType === 'map' && swapLooms)
 			MODULES.heirlooms.plagueSwap = false;
 	}
 	if (mapType === 'world' && !dontSwap) {
 		//Change swap zone to current zone if we're above X HD ratio.
-		if (hdCheck && getPageSetting('heirloomSwapHD') > 0 && hdStats.hdRatioHeirloom >= getPageSetting('heirloomSwapHD')) swapZone = game.global.world;
+		if (hdCheck && getPageSetting('heirloomSwapHD') > 0 && hdStats.hdRatioHeirloom >= getPageSetting('heirloomSwapHD') && shouldAbandon(false)) swapZone = game.global.world;
 		//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
 		//Only relevant if in U2 and we're above zone 200.
 		if (game.global.universe === 2 && game.global.world >= 201 &&
