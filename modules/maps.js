@@ -242,9 +242,12 @@ function makeAdditionalInfoTooltip(mouseover) {
 		tooltipText += `The progress you have towards a free void map from the 'Void Maps' permanent bone upgrade</p>`;
 
 	}
-	tooltipText += `<p><b>Auto Level</b><br>`;
+	tooltipText += `<p><b>AL</b> (Auto Level)<br>`;
 	tooltipText += `The level that the script recommends using whilst farming.</p>`;
 
+	tooltipText += `<p><b>AL2</b> (Auto Level 2, based off of zFarm)<br>`;
+	tooltipText += `L: The ideal map level for loot gains.<br>`;
+	tooltipText += `S: The ideal map level for a mixture of speed and loot gains.</p>`;
 
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
@@ -350,13 +353,13 @@ function makeAdditionalInfo() {
 	//Free void tracker
 	if (game.permaBoneBonuses.voidMaps.owned > 0) {
 		var voidValue = game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10;
-		description += `Void: ${voidValue}/10`;
+		description += `V ${voidValue}/10`;
 		description += lineBreak;
 	}
 	//Mapping auto level
 	description += `AL: ${hdStats.autoLevel}`;
 	description += lineBreak;
-	description += `AL2: ${hdStats.autoLevelData.overall.mapLevel}`;
+	description += `AL2 (L:${hdStats.autoLevelData.overall.mapLevel} S:${hdStats.autoLevelDataFrag.speed.mapLevel})`;
 	//Breed timer when you have an amalgamator
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		description += lineBreak;
@@ -512,15 +515,12 @@ function autoMap() {
 	}
 
 	//Reset to defaults
-	while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive) {
+	while ([1, 2, 3].includes(game.options.menu.repeatUntil.enabled) && !game.global.mapsActive && !game.global.preMapsActive)
 		toggleSetting('repeatUntil');
-	}
-	if (game.options.menu.exitTo.enabled) {
+	if (game.options.menu.exitTo.enabled)
 		toggleSetting('exitTo');
-	}
-	if (game.options.menu.repeatVoids.enabled) {
+	if (game.options.menu.repeatVoids.enabled)
 		toggleSetting('repeatVoids');
-	}
 
 	//Reset to defaults when on world grid
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
@@ -653,7 +653,6 @@ function autoMap() {
 	} else if (game.global.preMapsActive) {
 
 		//Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
-		//Not FULLY bugtested but works with my initial tests and is hopefully bug free.
 		function abandonMapCheck() {
 			if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
 			if (game.global.currentMapId !== '') {
