@@ -63,6 +63,7 @@ function fluffyEvolution() {
 
 	if (perkRespec) {
 		viewPortalUpgrades();
+		fireAllWorkers();
 		runPerky();
 		activateClicked();
 	}
