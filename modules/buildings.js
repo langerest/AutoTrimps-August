@@ -403,13 +403,12 @@ function buyBuildings() {
 
 	if (game.global.universe === 1) {
 		//Nurseries
-		if (!game.buildings.Nursery.locked) {
+		if (!game.buildings.Nursery.locked && !challengeActive('Trapper')) {
 			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
 			const settingPrefix = trimpStats.isC3 ? 'c2' : trimpStats.isDaily ? 'd' : '';
 			const nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
 			var nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
 			if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
-
 			var nurseryPct = buildingSettings.Nursery.percent / 100;
 			var nurseryCanAfford = calculateMaxAfford_AT(game.buildings.Nursery, true, false, false, null, nurseryPct);
 			var nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - game.buildings.Nursery.owned);

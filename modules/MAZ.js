@@ -173,8 +173,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//Map tab - Special Maps!
 	else if (event === "UniqueMaps") {
-
-		const baseText = "<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input.</p>";
+		const baseText = "<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input. If there's a map you don't own and you want to run that drops in maps then the script will now run one to obtain it.</p>";
 		const smithy = "<p>The right side of this window is dedicated to running Melting Point when you've reached a certain Smithy value. As each runtype of vastly different there's different inputs for each type of run that you can do! Certain challenges have overrides for this, once unlocked they can be found in the C3 tab.</p>";
 
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
@@ -190,28 +189,28 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		if (currSettingUniverse === 1) {
 			var mapUnlocks = [
-				'The_Block', 'The_Wall', 'Dimension_of_Anger'
+				'The Block', 'The Wall', 'Dimension of Anger'
 			]
-			if (game.stats.highestLevel.valueTotal() >= 33) mapUnlocks.push("Trimple_Of_Doom");
-			if (game.stats.highestLevel.valueTotal() >= 80) mapUnlocks.push("The_Prison");
-			if (game.stats.highestLevel.valueTotal() >= 170) mapUnlocks.push("Imploding_Star");
+			if (game.stats.highestLevel.valueTotal() >= 33) mapUnlocks.push("Trimple Of Doom");
+			if (game.stats.highestLevel.valueTotal() >= 80) mapUnlocks.push("The Prison");
+			if (game.stats.highestLevel.valueTotal() >= 170) mapUnlocks.push("Imploding Star");
 		}
 
 		if (currSettingUniverse === 2) {
 			//Adding in the U2 Unique Maps if they've been unlocked.
 			var mapUnlocks = [
-				'Big_Wall', 'Dimension_of_Rage', 'Prismatic_Palace'
+				'Big Wall', 'Dimension of Rage', 'Prismatic Palace'
 			]
 
 			if (game.stats.highestRadLevel.valueTotal() >= 33) mapUnlocks.push("Atlantrimp");
-			if (game.stats.highestRadLevel.valueTotal() >= 50) mapUnlocks.push("Melting_Point");
-			if (game.stats.highestRadLevel.valueTotal() >= 175) mapUnlocks.push("Frozen_Castle");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) mapUnlocks.push("Melting Point");
+			if (game.stats.highestRadLevel.valueTotal() >= 175) mapUnlocks.push("Frozen Castle");
 
 
 			//Adding in Smithy Settings if in u2
-			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP_Smithy");
-			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP_Smithy_Daily");
-			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP_Smithy_C3");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy_Daily");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP Smithy_C3");
 		}
 
 		for (var x = 0; x < mapUnlocks.length; x++) {
@@ -219,12 +218,12 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var item = mapUnlocks[x];
 			var setting = settingGroup[item];
 			//U1
-			if (item === 'Trimple_Of_Doom' && game.stats.highestLevel.valueTotal() < 33) continue;
-			if (item === 'The_Prison' && game.stats.highestLevel.valueTotal() < 80) continue;
-			if (item === 'Imploding_Star' && game.stats.highestLevel.valueTotal() < 170) continue;
+			if (item === 'Trimple Of Doom' && game.stats.highestLevel.valueTotal() < 33) continue;
+			if (item === 'The Prison' && game.stats.highestLevel.valueTotal() < 80) continue;
+			if (item === 'Imploding Star' && game.stats.highestLevel.valueTotal() < 170) continue;
 			//U2
 			if (item === 'Atlantrimp' && game.stats.highestRadLevel.valueTotal() < 33) continue;
-			if (item === 'Melting_Point' && game.stats.highestRadLevel.valueTotal() < 50) continue;
+			if (item === 'Melting Point' && game.stats.highestRadLevel.valueTotal() < 50) continue;
 			if (item.includes('Smithy') && game.stats.highestRadLevel.valueTotal() < 50) continue;
 			var max;
 			var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
@@ -273,7 +272,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var value = 'value';
 		if (game.global.universe === 2) value += 'U2';
 
-		settingGroup = {
+		var settingGroup = {
 			general: false,
 			fragment: false,
 			upgrades: false,
@@ -349,7 +348,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var setting, checkbox;
 		var setting_AT = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
 
-		settingGroup = {
+		var settingGroup = {
 			Reflect: {},
 			Empower: {},
 			Mutimp: {},
@@ -408,12 +407,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		//Skip Lines to seperate
 		tooltipText += "</td></tr><tr>";
-
 		//Setup challenges that will be displayed
 		var count = 0;
 		var setting, checkbox;
-		settingGroup = {};
-		fusedChallenges = {};
+		var settingGroup = {};
+		var fusedChallenges = {};
 
 		if (currSettingUniverse === 1) {
 			var highestZone = game.stats.highestLevel.valueTotal();
@@ -434,7 +432,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (highestZone >= 180) settingGroup.Lead = {};
 			if (highestZone >= 425) settingGroup.Obliterated = {};
 			if (game.global.totalSquaredReward >= 4500) settingGroup.Eradicated = {};
-
+			//Fused C2s
 			if (getPageSetting('c2Fused', currSettingUniverse)) {
 				if (highestZone >= 45) fusedChallenges.Enlightened = {};
 				if (highestZone >= 180) fusedChallenges.Waze = {};
@@ -445,19 +443,19 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 		}
 		else if (currSettingUniverse === 2) {
-			var radonHZE = game.stats.highestRadLevel.valueTotal();
-			if (radonHZE >= 15) settingGroup.Unlucky = {};
-			if (radonHZE >= 20) settingGroup.Downsize = {};
-			if (radonHZE >= 25) settingGroup.Transmute = {};
-			if (radonHZE >= 35) settingGroup.Unbalance = {};
-			if (radonHZE >= 45) settingGroup.Duel = {};
-			if (radonHZE >= 60) settingGroup.Trappapalooza = {};
-			if (radonHZE >= 70) settingGroup.Wither = {};
-			if (radonHZE >= 85) settingGroup.Quest = {};
-			if (radonHZE >= 105) settingGroup.Storm = {};
-			if (radonHZE >= 115) settingGroup.Berserk = {};
-			if (radonHZE >= 175) settingGroup.Glass = {};
-			if (radonHZE >= 201) settingGroup.Smithless = {};
+			var highestZone = game.stats.highestRadLevel.valueTotal();
+			if (highestZone >= 15) settingGroup.Unlucky = {};
+			if (highestZone >= 20) settingGroup.Downsize = {};
+			if (highestZone >= 25) settingGroup.Transmute = {};
+			if (highestZone >= 35) settingGroup.Unbalance = {};
+			if (highestZone >= 45) settingGroup.Duel = {};
+			if (highestZone >= 60) settingGroup.Trappapalooza = {};
+			if (highestZone >= 70) settingGroup.Wither = {};
+			if (highestZone >= 85) settingGroup.Quest = {};
+			if (highestZone >= 105) settingGroup.Storm = {};
+			if (highestZone >= 115) settingGroup.Berserk = {};
+			if (highestZone >= 175) settingGroup.Glass = {};
+			if (highestZone >= 201) settingGroup.Smithless = {};
 		}
 
 		const headerNames = ['Challenge', 'Current Zone', 'End Zone'];
@@ -1817,7 +1815,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>";
 		}
 		if (mapBonus) {
-			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings.</li>"
+			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings. If set to <b>-1</b> it will use your world job ratios.</li>"
 			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 			mazHelp += "<li><b>Special</b> - The type of cache you'd like to run when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings.</li>";
 		}
@@ -1847,7 +1845,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 		}
 		if (hdFarm) {
-			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from the <b>Hits Survived</b> setting.</li>"
+			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from the <b>Hits Survived</b> setting. If set to <b>-1</b> it will use your world job ratios.</li>"
 			mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
 		}
 		if (worshipperFarm) {
@@ -1894,7 +1892,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
 	if (!raiding && !smithyFarm && !hdFarm && !golden) {
-		mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line.</li>";
+		mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. If set to <b>-1</b> it will use your world job ratios.</li>";
 		mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 	}
 	if (mapFarm || mapBonus || insanity || alchemy || desolation || toxicity)
@@ -2291,7 +2289,7 @@ function saveATUniqueMapsConfig(setting) {
 		if (!setting[name]) setting[name] = {};
 		setting[name].enabled = checked;
 
-		if (name.includes('MP_Smithy')) {
+		if (name.includes('MP Smithy')) {
 			var valueBoxes = document.getElementsByClassName('jobConfigQuantity');
 
 			var value = parseInt(valueBoxes[z].value, 10);
@@ -2316,48 +2314,29 @@ function saveATUniqueMapsConfig(setting) {
 		setting[name].cell = cell;
 
 		//Error checking
-		if (name.includes('Big_Wall') && zone < 7) {
-			error += " Big Wall can\'t be run below zone 7.<br>";
-			errorMessage = true;
-		}
-
-		if (name.includes('The_Block') && zone < 11) {
-			error += " The Block can\'t be run below zone 11.<br>";
-			errorMessage = true;
-		}
-
-		if (name.includes('The_Wall') && zone < 15) {
-			error += " The Wall can\'t be run below zone 15.<br>";
-			errorMessage = true;
-		}
-		if (name.includes('Dimension_of_Anger') && zone < 21) {
-			error += " Dimension of Anger can\'t be run below zone 21.<br>";
-			errorMessage = true;
-		}
-		if (name.includes('Prismatic_Palace') && zone < 21) {
-			error += " Prismatic Palace can\'t be run below zone 21.<br>";
-			errorMessage = true;
-		}
-		if ((name.includes('Atlantrimp') || name.includes('Trimple_Of_Doom')) && (zone < 33 || (zone === 33 && cell < 50))) {
-			error += " " + name + " can\'t be run below zone 33 cell 50.<br>";
-			errorMessage = true;
-		}
-		if (name.includes('Melting_Point') && (zone < 50 || (zone === 50 && cell < 56))) {
-			error += " Melting Point can\'t be run below zone 50 cell 56.<br>";
-			errorMessage = true;
-		}
-		if (name.includes('The_Prison') && zone < 80) {
-			error += " The Prison can\'t be run below zone 80.<br>";
-			errorMessage = true;
-		}
-		if (name.includes('Imploding_Star') && zone < 170) {
-			error += " Imploding Star can\'t be run below zone 170.<br>";
-			errorMessage = true;
-		}
-		if (name.includes('Frozen_Castle') && zone < 175) {
-			error += " Frozen Castle can\'t be run below zone 175.<br>";
-			errorMessage = true;
-		}
+		/* if (name.includes('Big Wall') && zone < 7)
+			error += " Big Wall can't be run below zone 7.<br>";
+		if (name.includes('The Block') && zone < 11)
+			error += " The Block can't be run below zone 11.<br>";
+		if (name.includes('The Wall') && zone < 15)
+			error += " The Wall can't be run below zone 15.<br>";
+		if (name.includes('Dimension of Anger') && zone < 21)
+			error += " Dimension of Anger can't be run below zone 21.<br>";
+		if (name.includes('Dimension of Rage') && zone < 16)
+			error += " Dimension of Rage can't be run below zone 16.<br>";
+		if (name.includes('Prismatic Palace') && zone < 21)
+			error += " Prismatic Palace can't be run below zone 21.<br>";
+		if ((name.includes('Atlantrimp') || name.includes('Trimple Of Doom')) && (zone < 33 || (zone === 33 && cell < 50)))
+			error += " " + name + " can't be run below zone 33 cell 50.<br>";
+		if (name.includes('Melting Point') && (zone < 50 || (zone === 50 && cell < 56)))
+			error += " Melting Point can't be run below zone 50 cell 56.<br>";
+		if (name.includes('The Prison') && zone < 80)
+			error += " The Prison can't be run below zone 80.<br>";
+		if (name.includes('Imploding Star') && zone < 170)
+			error += " Imploding Star can't be run below zone 170.<br>";
+		if (name.includes('Frozen Castle') && zone < 175)
+			error += " Frozen Castle can't be run below zone 175.<br>";
+		if (error !== '') errorMessage = true; */
 
 		y++;
 	}

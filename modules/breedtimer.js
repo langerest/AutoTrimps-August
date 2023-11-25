@@ -125,7 +125,6 @@ function geneAssist() {
 
 	var timeRemaining = breedTimeRemaining();
 	var totalTime = breedTotalTime();
-
 	var target;
 
 	const angelic = mastery('angelic');
@@ -179,27 +178,32 @@ function geneAssist() {
 		compareTime = new MODULES.breedtimer.DecimalBreed(timeRemaining.add(breedTime));
 	else
 		compareTime = new MODULES.breedtimer.DecimalBreed(totalTime);
+
 	if (!compareTime.isFinite()) compareTime = new Decimal(999);
 	var genDif = new MODULES.breedtimer.DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
 
+	const spendingPct = getPageSetting('geneAssistPercent') / 100;
+	function geneticistCost(amount = 1) {
+		var geneticist = game.jobs.Geneticist;
+		return (game.resources.food.owned * spendingPct) > resolvePow(geneticist.cost.food, geneticist, amount);
+	}
+
 	if (compareTime.cmp(target) < 0) {
-		if (game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < getNextGeneticistCost()) return;
+		if (!geneticistCost()) return;
 		if (genDif.cmp(0) > 0) {
-			if (game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < resolvePow(geneticist.cost.food, game.jobs.Geneticist, genDif.toNumber())) {
-				if (genDif.cmp(1000) > 0 && game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < resolvePow(geneticist.cost.food, game.jobs.Geneticist, 1000))
-					genDif = new Decimal(1000);
-				else if(genDif.cmp(100) > 0 && game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < resolvePow(geneticist.cost.food, game.jobs.Geneticist, 100))
-					genDif = new Decimal(100);
-				else
-					genDif = new Decimal(10);
-			}
-			addGeneticist(genDif.toNumber());
+			const genesToBuy = [Math.max(genDif.abs().toNumber()), 500, 100, 50, 10, 5, 1];
+			while (genesToBuy.length > 0 && !geneticistCost(genesToBuy[0]))
+				genesToBuy.shift();
+			debug('Hiring ' + prettify(genesToBuy[0]) + ' Geneticist' + (genesToBuy[0] > 1 ? 's' : ''), "jobs", "*users");
+			addGeneticist(genesToBuy[0]);
 		}
 	}
 	else if ((compareTime.mul(0.98).cmp(target) > 0 && timeRemaining.cmp(1) > 0) || (potencyMod().cmp(1) === 0)) {
 		if (!genDif.isFinite()) genDif = new Decimal(-1);
 		if (genDif.cmp(0) < 0) {
-			removeGeneticist(genDif.abs().toNumber());
+			const genesToFire = Math.max(Math.floor(genDif.abs().toNumber() * .8), 1);
+			debug('Firing ' + prettify(genesToFire) + ' Geneticist' + (genesToFire > 1 ? 's' : ''), "jobs", "*users");
+			removeGeneticist(genesToFire);
 		}
 	}
 }
