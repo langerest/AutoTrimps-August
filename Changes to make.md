@@ -5,45 +5,59 @@
 # Challenges
 
 1. ## Berserk
-   - Disable mapping when alive.
-   - Farm in lvl6 map for max stacks
-   - Farm X amt of maps OR till you have 10x the stats of the improbability
+    - Disable mapping when alive.
+    - Farm in lvl6 map for max stacks
+    - Farm X amt of maps OR till you have 10x the stats of the improbability
 
 # Calc
-   - Fix issue with Ice debuff calculations inside Spires
-     - Deregate
-     - https://discord.com/channels/371177798305447938/371348913036197899/1168575519864926319
+
+-   Fix issue with Ice debuff calculations inside Spires
+    -   Deregate
+    -   https://discord.com/channels/371177798305447938/371348913036197899/1168575519864926319
 
 # Feature Requests
 
-   1. Magma 
-      - Add Minimise option to new fueling zone setting
+1. Magma
 
-   2. Auto Portal 
-      - Add portal into U1/U2 setting
+    - Add Minimise option to new fueling zone setting
 
-   3. Auto Jobs (early U2)
-      - Safeguard firing for jobs when food is low.
+2. Auto Jobs (early U2)
+
+    - Safeguard firing for jobs when food is low.
         - https://discord.com/channels/371177798305447938/371348913036197899/1177402492422725663
 
-   4. Upgrades
-      - Bounty being prioritised if purchasble in X amount of time.
+3. Upgrades
+
+    - Bounty being prioritised if purchasble in X amount of time.
         - Should probably be 5mins or less?
         - https://discord.com/channels/371177798305447938/371348913036197899/1177401054564982854
 
-   5. Challenges
-      1. Bublé
-         - Safeguard for dying
+4. HD Farm
+
+    - Disable Map Bonus farming when speed map level is below X
+    - https://discord.com/channels/371177798305447938/371348913036197899/1180873189778268171
+
+5. Auto Equality
+
+    - Support for the Revenge challenge
+    - When possible suicide until you have 19 stacks and then do the usual abandons from there.
+    - https://discord.com/channels/371177798305447938/371348913036197899/1184641519735558235
+
+6. Berserk & Exterminate
+    - Only run mapping lines specific to Exterminate during the challenge.
+    - Disable HD Farm/Hits Survived/Map Bonus general ratio settings on it
+    - Important so that you don't need to go manually disable all other lines/use MAZ.
+    - https://discord.com/channels/371177798305447938/371348913036197899/1185268752070213643
 
 # Help Window
 
-   1. Fragment decision making 
-   2. Auto Gather decision making
-      -  Change Auto Gather description to mention this
+1. Fragment decision making
+2. Auto Gather decision making
+    - Change Auto Gather description to mention this
 
 # Bugs
 
-   - Gene Assist
-     - Gene Assist has a fun interaction with Void Maps - if you set Gene Assist to keep your breeding timer at 3 seconds, you set HD Farm to farm maps until you can survive one hit in Void Map, and then you jump into Void Gas map, suddenly you can't survive 1 hit anymore because Geneticist were fired to keep up with the breeding timer.
-       - erp.lsf
-       - https://discord.com/channels/371177798305447938/371348913036197899/1119260831289462844
+-   Gene Assist
+    -   Gene Assist has a fun interaction with Void Maps - if you set Gene Assist to keep your breeding timer at 3 seconds, you set HD Farm to farm maps until you can survive one hit in Void Map, and then you jump into Void Gas map, suddenly you can't survive 1 hit anymore because Geneticist were fired to keep up with the breeding timer.
+        -   erp.lsf
+        -   https://discord.com/channels/371177798305447938/371348913036197899/1119260831289462844
