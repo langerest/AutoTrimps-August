@@ -345,13 +345,24 @@ function shouldAbandon(zoneCheck = true) {
     return false;
 }
 
+function _berserkDisableMapping() {
+    if (!challengeActive('Berserk')) return false;
+    if (!getPageSetting('berserk')) return false;
+    if (game.global.mapsActive || game.global.preMapsActive) return false;
+    if (!game.global.fighting || game.global.soldierHealth <= 0) return false;
+    if (game.challenges.Berserk.frenzyStacks > 0) return true;
+}
+
+function _noMappingChallenges() {
+    if (challengeActive('Trapper')) return true;
+    if (challengeActive('Trappapalooza')) return true;
+    if (challengeActive('Exterminate')) return true;
+}
+
 function autoMaps() {
     if (!getPageSetting('autoMaps') || !game.global.mapsUnlocked) return;
 
     if (_checkSitInMaps()) return;
-
-    //Override to disable mapping when we are the world and currently fighting
-    //if (game.challenges.Berserk.frenzyStacks > 0 && !game.global.mapsActive && !game.global.preMapsActive && challengeActive('Berserk') && getPageSetting('berserk')) return;
 
     if (_checkWaitForFrags()) return;
 
@@ -552,7 +563,7 @@ function _searchForUniqueMaps(mapsOwned, runUnique = true) {
         .filter((mapName) => MODULES.mapFunctions.uniqueMaps[mapName].zone <= game.global.world + (trimpStats.plusLevels ? 10 : 0));
 
     //Loop through unique map settings and obtain any unique maps that are to be run but aren't currently owned.
-    if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
+    if (!runUnique && uniqueMapsToGet.length > 0) mapSettings = _obtainUniqueMap(uniqueMapsToGet.sort((a, b) => MODULES.mapFunctions.uniqueMaps[b].zone - MODULES.mapFunctions.uniqueMaps[a].zone)[0]);
 }
 
 // Deciding if we need to create a map or run voids/bw.
@@ -617,7 +628,7 @@ function _purchaseMap(lowestMap) {
     }
     if (result === 1) {
         const mapCost = updateMapCost(true);
-        debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / game.resources.fragments.owned) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
+        debug(`Bought ${prettifyMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1])}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / (game.resources.fragments.owned + mapCost)) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
         runMap();
         MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
     }

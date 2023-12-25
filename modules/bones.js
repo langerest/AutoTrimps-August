@@ -1,4 +1,4 @@
-function boneShrine() {
+function boneShrine(lineCheck) {
     const settingName = 'boneShrineSettings';
     const baseSettings = getPageSetting(settingName);
     const defaultSetting = baseSettings ? baseSettings[0] : null;
@@ -6,13 +6,14 @@ function boneShrine() {
 
     const setting = _getBoneShrineSetting(baseSettings, defaultSetting);
     if (setting === undefined) return;
+    if (lineCheck) return setting;
 
     const shrineCharges = _getBoneShrineCharges(setting);
     const boneShrineGather = _getBoneShrineGather(setting);
 
     const boneShrineAncientTreasure = game.mapUnlocks.AncientTreasure.canRunOnce ? setting.atlantrimp : false;
     const ancientTreasure = getAncientTreasureName();
-    if (boneShrineAncientTreasure) runUniqueMap(ancientTreasure);
+    if (boneShrineAncientTreasure) _runUniqueMap(ancientTreasure);
 
     const map = getCurrentMapObject();
     if (!boneShrineAncientTreasure || (game.global.mapsActive && map.name === ancientTreasure && game.global.lastClearedMapCell >= map.size - 30)) {
@@ -44,6 +45,7 @@ function _getBoneShrineSetting(baseSettings, defaultSetting) {
         if (defaultSetting.bonebelow <= 0) defaultSetting.bonebelow = 999;
         defaultSetting.atlantrimp = false;
         defaultSetting.boneamount = 1;
+        defaultSetting.priority = 0;
         return defaultSetting;
     }
 

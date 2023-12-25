@@ -178,6 +178,18 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2],
 			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount(1) >= 20) });
+
+		createSetting('autoHeirlooms',
+			function () { return ('Auto Allocate Heirlooms') },
+			function () { 
+				var description = "<p>Uses a modified version of the <b>Heirloom</b> calculator to identify the most optimal heirloom modifier distribution when auto portaling.</p>";
+				description += "<p>There are inputs you can adjust in the <b>Heirloom</b> window to allow you to adjust how it distributes nullifium.</p>";
+				description += "<p>If you want more advanced settings import your save into the <b>Heirloom</b> calculator.</p>";
+				description += "<p>Will <b>only</b> allocate nullifium on heirlooms that you have bought an upgrade or swapped modifiers on.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+			return description;
+			}, 'boolean', false, null, 'Core', [1, 2]);
+
 		createSetting('autoPerks',
 			function () { return ('Auto Allocate Perks') },
 			function () {
@@ -1886,7 +1898,7 @@ function initializeAllSettings() {
 				description += "<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>";
 				description += "<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'c2table\', \'update\')', 'C2', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("c2table")', 'C2', [0]);
 
 		createSetting('c2SharpTrimps',
 			function () { return (cinf() + ' Sharp Trimps') },
@@ -2356,14 +2368,14 @@ function initializeAllSettings() {
 		createSetting('berserk',
 			function () { return ('Berserk') },
 			function () {
-				var description = "<p><b>NOT IMPLEMENTED YET!</b><br> Enable this if you want the script to perform additional actions during the <b>Berserk</b> challenge.</p>";
-				description += "<p>If enabled it will disable mapping if your army is alive in the world and you have more than 0 stacks of Frenzy buff.</p>";
-				description += "<p>If your army dies then it will go into a level 6 map and farm until you have 20 stacks of Frenzy to ensure you're always the strongest you can be. It <b>will</b> also abandon maps that are in the middle of being run to go obtain these stacks!</p>";
-				description += "Definitely needs some farm X metric but the best way to do that is still to be decided."
+				var description = "<p>Enable this if you want the script to perform additional actions during the <b>Berserk</b> challenge.</p>";
+				description += "<p>If enabled it will disable mapping if your army is alive in the world and you have more than 0 stacks of Frenzy buff and only allows mapping settings with a Berserk challenge line to be run.</p>";
+				description += "<p>If your army dies then it will go into a level 6 map and farm until you have max Frenzied stacks to ensure you're always the strongest you can be. It <b>will</b> also abandon maps that are in the middle of being run to go obtain these stacks!</p>";
+				description += "<p>Make sure you setup appropriate mapping lines to farm enough should you die. I highly recommend repeat every 1 zone lines for HD Farm, Tribute Farm and Smithy Farm.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
-			function () { return (game.stats.highestRadLevel.valueTotal() >= 999) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 115) });
 
 		//Pandemonium
 		createSetting('pandemonium',
@@ -3123,6 +3135,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The staff to use when running <b>Savory Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Farmer Efficiency instead of Miner Efficiency.</p>";
 				description += "<p><b>Recommended:</b> Dedicated food efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
@@ -3133,6 +3146,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The staff to use when running <b>Wooden Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Lumberjack Efficiency instead of Miner Efficiency.</p>";
 				description += "<p><b>Recommended:</b> Dedicated wood efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
@@ -3148,11 +3162,12 @@ function initializeAllSettings() {
 			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
-		createSetting('heirloomStaffResource',
+		createSetting('heirloomStaffScience',
 			function () { return ('Research Cache') },
 			function () {
 				var description = "<p>The staff to use when running <b>Research Cache</b> maps.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Science Efficiency instead of Miner Efficiency.</p>";
 				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirloom', [2],
@@ -3755,7 +3770,7 @@ function initializeAllSettings() {
 				description += "<p><b>3.</b><br>Buy Efficiency if it is better than capacity.</p>";
 				description += "<p><b>4.</b><br>Buy Capacity or Supply depending on which is cheaper, or based on SupplyWall.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'MagmiteExplain\', \'update\')', 'Magma', [1],
+			}, 'infoclick', null, 'ImportExportTooltip("magmiteExplain")', 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 
 		//Automate Fuel Zones
@@ -4130,25 +4145,25 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Import a AutoTrimps settings file.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'ImportAutoTrimps\', \'update\')', 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("importAutoTrimps")', 'Import Export', [0]);
 		createSetting('ExportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
 				var description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'ExportAutoTrimps\', \'update\')', 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("exportAutoTrimps")', 'Import Export', [0]);
 		createSetting('DefaultAutoTrimps',
 			function () { return ('Reset To Default') },
 			function () {
 				var description = "<p>Reset everything to the way it was when you first installed the script.</p>";
 				return description;
-			}, 'infoclick', null, 'ImportExportTooltip(\'ResetDefaultSettingsProfiles\', \'update\')', 'Import Export', [0]);
+			}, 'infoclick', null, 'ImportExportTooltip("resetDefaultSettingsProfiles"\'")', 'Import Export', [0]);
 		createSetting('DownloadDebug',
 			function () { return ('Download For Debug') },
 			function () {
 				var description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip("ExportAutoTrimps","update",true)', 'Import Export', [0]);
+			}, 'action', null, 'ImportExportTooltip("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
 
 		createSetting('updateReload',
 			function () { return ('Update Reload') },
@@ -4228,7 +4243,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will display the order that your current settings run if you have the <b>Auto Maps Priority</b> setting enabled.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip(\'priorityOrder\', \'update\')', 'Help', [0]);
+			}, 'action', null, 'ImportExportTooltip("priorityOrder")', 'Help', [0]);
 		/* createSetting('helpFragments',
 			function () { return ('Fragment Decisions') },
 			function () {
@@ -4264,7 +4279,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will set the challenge that Trimps is running to your input.</p>";
 				return description;
-			}, 'action', null, 'ImportExportTooltip("SetCustomChallenge");', 'Test', [0]);
+			}, 'action', null, 'ImportExportTooltip("setCustomChallenge");', 'Test', [0]);
 
 		createSetting('testSetC2',
 			function () { return ('Toggle ' + cinf()) },
@@ -4667,7 +4682,7 @@ function modifyParentNodeUniverseSwap() {
     modifyParentNode('heirloomWindStack', 'show');
     modifyParentNode('heirloomSwapHDCompressed', 'show');
     modifyParentNode('heirloomStaffFragment', 'show');
-    modifyParentNode('heirloomStaffResource', 'show');
+    modifyParentNode('heirloomStaffScience', 'show');
 
     modifyParentNode('heirloomAutoModTarget', heirloom);
     modifyParentNode('heirloomAutoShieldMod7', heirloom);
@@ -6301,6 +6316,12 @@ function updateATVersion() {
                     obj[x].done = '';
                 }
                 game.global.addonUser['archaeologySettings'].valueU2 = obj;
+            }
+        }
+
+        if (autoTrimpSettings['ATversion'].split('v')[1] < '6.5.39') {
+            if (typeof tempSettings['heirloomStaffResource'] !== 'undefined') {
+                autoTrimpSettings.heirloomStaffScience.valueU2 = tempSettings.heirloomStaffResource.valueU2;
             }
         }
     }
