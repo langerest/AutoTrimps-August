@@ -534,6 +534,7 @@ function _getSelectedHeirloom() {
 
 function saveHeirloomSettings() {
     let heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
+    if (heirloomInputs === null) heirloomInputs = {};
     let update = heirloomInputs;
     const customRatio = JSON.parse(document.getElementById('heirloomCustomRatioBtn').className.split(' ')[2].slice(10));
     if (customRatio) {
@@ -782,7 +783,7 @@ class Heirloom {
         if (type === 'ScientistSpeed' && this.scienceHeirloom) {
             return Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
         }
-        if (type === 'ParityPower') {
+        if (type === 'ParityPower' && !this.scienceHeirloom) {
             return Math.log(((value + 1 + stepAmount) / (value + 1)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
         }
         if (type === 'inequality') {

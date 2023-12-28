@@ -4,7 +4,7 @@ window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
 };
 
 //Loads setting data from localstorage into object
-function _setupAutoTrimpsSettings() {
+function _loadAutoTrimpsSettings() {
     const tmp = JSON.parse(localStorage.getItem('atSettings'));
     if (tmp !== null && tmp['ATversion'] !== undefined) autoTrimpSettings = tmp;
 }
@@ -114,7 +114,7 @@ function setPageSetting(setting, newValue, universe = portalUniverse) {
     else if (selectedIndex.indexOf(settingType) !== -1) autoTrimpSettings[setting][selected] = newValue;
 
     //Update button values if necessary
-    if (settingType !== 'mazArray' && settingType !== 'mazDefaultArray') updateCustomButtons(true);
+    if (settingType !== 'mazArray' && settingType !== 'mazDefaultArray') updateAutoTrimpSettings(true);
     saveSettings();
 }
 
@@ -179,36 +179,46 @@ function filterMessage2(a) {
     }
 }
 
+//Check if the gameUser setting has been set to a valid user.
+function gameUserCheck(skipTest) {
+    const user = autoTrimpSettings.gameUser.value.trim().toLowerCase();
+    if (!user) return false;
+    const allowedUsers = ['sadaugust', 'kyotie', 'charles', 'test'];
+    if (skipTest) allowedUsers.pop();
+    return allowedUsers.some((allowedUser) => allowedUser === user);
+}
+
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 
 //Will activate a 24 hour timewarp.
-function testTimeWarp(hours) {
-    var timeWarpHours = 0;
-    try {
-        timeWarpHours = parseNum(document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, ''));
-        if (timeWarpHours === null || timeWarpHours === undefined || timeWarpHours === 0) {
+function _getTimeWarpHours(inputHours) {
+    let timeWarpHours = 24; // default value
+
+    if (inputHours) {
+        timeWarpHours = inputHours;
+    } else {
+        try {
+            timeWarpHours = parseNum(document.getElementById('setSettingsNameTooltip').value.replace(/[\n\r]/gm, ''));
+            if (!timeWarpHours) {
+                debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
+            }
+        } catch (err) {
             debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
-            timeWarpHours = 24;
-        }
-    } catch (err) {
-        if (!hours) {
-            debug('Time Warp input is invalid. Defaulting to 24 hours.', 'test');
-            timeWarpHours = 24;
         }
     }
 
-    if (hours) timeWarpHours = hours;
-    var timeToRun = timeWarpHours * 3600000;
+    return timeWarpHours;
+}
 
-    game.global.lastOnline -= timeToRun;
-    game.global.portalTime -= timeToRun;
-    game.global.zoneStarted -= timeToRun;
-    game.global.lastSoldierSentAt -= timeToRun;
-    game.global.lastSkeletimp -= timeToRun;
-    game.permaBoneBonuses.boosts.lastChargeAt -= timeToRun;
+//Will activate a 24 hour timewarp.
+function testTimeWarp(hours) {
+    const timeWarpHours = _getTimeWarpHours(hours);
+    const timeToRun = timeWarpHours * 3600000;
+
+    const keys = ['lastOnline', 'portalTime', 'zoneStarted', 'lastSoldierSentAt', 'lastSkeletimp', 'lastChargeAt'];
+    _adjustGlobalTimers(keys, -timeToRun);
 
     offlineProgress.start();
-    return;
 }
 
 function testSpeedX(interval) {
@@ -253,7 +263,7 @@ function testChallenge() {
     game.global.challengeActive = challengeName;
 }
 
-function testRunningCinf() {
+function testRunningC2() {
     game.global.runningChallengeSquared = !game.global.runningChallengeSquared;
 }
 

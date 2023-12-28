@@ -780,7 +780,7 @@ load = function () {
         atlantrimpRespecOverride();
         resetVarsZone(true);
         if (typeof MODULES['graphs'].themeChanged === 'function') MODULES['graphs'].themeChanged();
-        updateCustomButtons(true);
+        updateAutoTrimpSettings(true);
     } catch (e) {
         debug('Load save failed: ' + e);
     }
@@ -834,7 +834,7 @@ function resetSettingsPortal() {
         const autoJobs = getPageSetting('jobType');
 
         document.getElementById('jobType').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
-        document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
+        document.getElementById('autoJobsLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
     }
 
     updateButtonText();

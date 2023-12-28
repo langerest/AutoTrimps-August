@@ -31,49 +31,47 @@ function callAutoMapLevel(settingName, special, maxLevel, minLevel) {
 
 //New setup!
 function callAutoMapLevel_new(mapName, special) {
-    //Figure out if we're looking for speed or loot
     const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking', 'Pandemonium Destacking', 'Desolation Destacking'];
-    const mapType = speedSettings.indexOf(mapName) >= 0 ? 'speed' : 'loot';
+    const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
     const mapModifiers = {
-        special: special ? special : trimpStats.mapSpecial,
-        biome: mapSettings.biome ? mapSettings.biome : trimpStats.mapBiome
+        special: special || trimpStats.mapSpecial,
+        biome: mapSettings.biome || trimpStats.mapBiome
     };
 
-    //Update initial stats if we've changed zones and it hasnt updated yet
     if (hdStats.autoLevelZone !== game.global.world) {
         hdStats.autoLevelZone = game.global.world;
         hdStats.autoLevelInitial = stats();
     }
+
     let mapLevel = mapSettings.levelCheck;
-    // Stop it from adjusting map levels and potentially wasting map credits during Mapology.
     if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
-    let autoLevel = 0;
-    //Get initial map level if not already set
-    if (mapLevel === Infinity) mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
-    //  Check every 6 seconds if we should be increasing or decreasing map level so that the values don't fluctuate too often
-    else if (mapName !== '' && atSettings.intervals.sixSecond) {
-        autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
-        //Increasing Map Level
-        if (autoLevel > mapLevel) mapLevel = autoLevel;
-        //Decreasing Map Level. Ignores fragment costs so that we can identify if we have lost the ability to farm a map.
-        autoLevel = get_best(hdStats.autoLevelInitial)[mapType].mapLevel;
-        if (autoLevel < mapLevel) mapLevel = autoLevel;
+
+    if (mapLevel === Infinity) {
+        mapLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+    } else if (mapName && atSettings.intervals.sixSecond) {
+        const autoLevel = get_best(hdStats.autoLevelInitial, true, mapModifiers)[mapType].mapLevel;
+        mapLevel = Math.max(mapLevel, autoLevel);
+        const autoLevelIgnoreFragments = get_best(hdStats.autoLevelInitial)[mapType].mapLevel;
+        mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
     }
+
     if (currQuest() === 8 || challengeActive('Bublé')) return mapLevel;
-    const mapBonusLevel = game.global.universe === 1 ? 0 - game.portal.Siphonology.level : 0;
-    if (mapName === 'Map Bonus' && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
-    else if (mapName === 'HD Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
-    else if (mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth') && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
-    else if (challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0) mapLevel = -1;
-    else if (mapName === 'Quest' && mapLevel < mapBonusLevel && (currQuest() === 6 || currQuest() === 7) && game.global.mapBonus !== 10) mapLevel = mapBonusLevel;
-    else if (mapName === 'Insanity Farm' && mapLevel <= 0) mapLevel = 1;
-    else if (mapName === 'Mayhem Destacking' && mapLevel < 0) mapLevel = getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0;
-    else if (mapName === 'Pandemonium Destacking' && mapLevel <= 0) mapLevel = 1;
-    else if (mapName === 'Alchemy Farm' && mapLevel <= 0) mapLevel = 1;
-    else if (mapName === 'Glass' && mapLevel <= 0) mapLevel = 1;
-    else if (mapName === 'Desolation Destacking' && mapLevel <= 0) mapLevel = 1;
-    else if (mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel) mapLevel = mapBonusLevel;
-    else if (_insanityDisableUniqueMaps() && mapLevel < 0) mapLevel = 0;
+
+    const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level : 0;
+    const mapBonusConditions = [
+        { condition: mapName === 'Map Bonus', level: mapBonusLevel },
+        { condition: mapName === 'HD Farm' && game.global.mapBonus !== 10, level: mapBonusLevel },
+        { condition: mapName === 'Hits Survived' && game.global.mapBonus < getPageSetting('mapBonusHealth'), level: mapBonusLevel },
+        { condition: challengeActive('Wither') && mapName !== 'Map Bonus' && mapLevel >= 0, level: -1 },
+        { condition: mapName === 'Quest' && mapLevel < mapBonusLevel && [6, 7].includes(currQuest()) && game.global.mapBonus !== 10, level: mapBonusLevel },
+        { condition: ['Insanity Farm', 'Pandemonium Destacking', 'Alchemy Farm', 'Glass', 'Desolation Destacking'].includes(mapName) && mapLevel <= 0, level: 1 },
+        { condition: mapName === 'Mayhem Destacking' && mapLevel < 0, level: getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0 },
+        { condition: mapName === 'Smithless Farm' && game.global.mapBonus !== 10 && mapLevel < mapBonusLevel, level: mapBonusLevel },
+        { condition: _insanityDisableUniqueMaps() && mapLevel < 0, level: 0 }
+    ];
+
+    const matchingCondition = mapBonusConditions.find(({ condition }) => condition);
+    if (matchingCondition) mapLevel = matchingCondition.level;
 
     return mapLevel;
 }
@@ -452,7 +450,7 @@ function populateFarmCalcData() {
         extraMapLevelsAvailable: extraMapLevelsAvailable,
         reducer: haveMapReducer,
         perfectMaps: perfectMapsUnlocked,
-        biome: biomeEnemyStats(biome),
+        biome: _getBiomeEnemyStats(biome),
         fragments: game.resources.fragments.owned,
         mapSpecial: getAvailableSpecials('lmc'),
         mapBiome: biome,
@@ -987,9 +985,9 @@ function get_best(results, fragmentCheck, mapModifiers) {
     return best;
 }
 
-function biomeEnemyStats(biome) {
-    function Plentiful() {
-        return [
+function _getBiomeEnemyStats(biome) {
+    const biomes = {
+        Plentiful: [
             [1.3, 0.95, false],
             [0.95, 0.95, true],
             [0.8, 1, false],
@@ -997,52 +995,42 @@ function biomeEnemyStats(biome) {
             [0.6, 1.3, true],
             [1, 1.1, false],
             [0.8, 1.4, false]
-        ];
-    }
-
-    function Sea() {
-        return [
+        ],
+        Sea: [
             [0.8, 0.9, true],
             [0.8, 1.1, true],
             [1.4, 1.1, false]
-        ];
-    }
-
-    function Mountain() {
-        return [
+        ],
+        Mountain: [
             [0.5, 2, false],
             [0.8, 1.4, false],
             [1.15, 1.4, false],
             [1, 0.85, true]
-        ];
-    }
-
-    function Forest() {
-        return [
+        ],
+        Forest: [
             [0.75, 1.2, true],
             [1, 0.85, true],
             [1.1, 1.5, false]
-        ];
-    }
-
-    function Depths() {
-        return [
+        ],
+        Depths: [
             [1.2, 1.4, false],
             [0.9, 1, true],
             [1.2, 0.7, false],
             [1, 0.8, true]
-        ];
-    }
+        ]
+    };
+    biomes.Farmlands = getFarmlandsResType() === 'Metal' ? biomes.Mountain : getFarmlandsResType() === 'Wood' ? biomes.Forest : getFarmlandsResType() === 'Food' ? biomes.Sea : getFarmlandsResType() === 'Gems' ? biomes.Depths : getFarmlandsResType() === 'Any' ? biomes.Plentiful : 'All';
 
-    function Farmlands() {
-        const biomeToReturn = getFarmlandsResType() === 'Metal' ? Mountain : getFarmlandsResType() === 'Wood' ? Forest : getFarmlandsResType() === 'Food' ? Sea : getFarmlandsResType() === 'Gems' ? Depths : getFarmlandsResType() === 'Any' ? Plentiful : 'All';
-        return biomeToReturn();
-    }
-
-    const biomesFunctions = [Plentiful, Sea, Mountain, Forest, Depths, Farmlands];
-    const biomeToMatch = ['Plentiful', 'Sea', 'Mountain', 'Forest', 'Depths', 'Farmlands'];
-    biome = biomeToMatch.indexOf(biome);
-    const enemyBiome = [[0.8, 0.7, true], [0.9, 1.3, false], [0.9, 1.3, false], [1, 1, false], [1.1, 0.7, false], [1.05, 0.8, true], [0.9, 1.1, true], ...biomesFunctions[biome]()];
+    const baseEnemyBiome = [
+        [0.8, 0.7, true],
+        [0.9, 1.3, false],
+        [0.9, 1.3, false],
+        [1, 1, false],
+        [1.1, 0.7, false],
+        [1.05, 0.8, true],
+        [0.9, 1.1, true]
+    ];
+    const enemyBiome = [...baseEnemyBiome, ...biomes[biome]];
     return enemyBiome;
 }
 
