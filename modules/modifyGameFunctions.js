@@ -1,3 +1,10 @@
+//Make AT button visible on timewarp screen if already in TW when loading AT
+if (usingRealTimeOffline) {
+    setupTimeWarpAT();
+    if (game.options.menu.offlineProgress.enabled === 1) removeTrustworthyTrimps();
+    cancelTooltip();
+}
+
 //Hacky way to allow the SA popup button to work within TW.
 autoBattle.originalpopup = autoBattle.popup;
 autoBattle.popup = function () {
@@ -25,6 +32,7 @@ offlineProgress.start = function () {
             game.global.portalTime += offlineTime;
             if (getZoneSeconds() >= offlineTime) game.global.zoneStarted += offlineTime;
         }
+        setupTimeWarpAT();
     } catch (e) {
         console.log('Loading Time Warp failed ' + e, 'other');
     }
