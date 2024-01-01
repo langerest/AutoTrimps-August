@@ -8,7 +8,7 @@ function safeBuyBuilding(building, amt) {
     if (!bwRewardUnlocked('Foremany') && game.global.world <= 10) amt = 1;
 
     buyBuilding(building, true, true, amt);
-    if (building !== 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), 'buildings', '*hammer2');
+    if (building !== 'Trap') debug('Building ' + amt + ' ' + building + addAnS(amt), 'buildings', '*hammer2');
 }
 
 function advancedNurseries() {
@@ -468,7 +468,7 @@ function _buyAntenna(buildingSettings) {
  */
 function _keepBuyingHousing(buildingSettings) {
     // If inside a do while loop in TW it will lag out the game at the start of a portal so best having it outside of that kind of loop
-    if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop) {
+    if (usingRealTimeOffline || atSettings.loops.atTimeLapseFastLoop || checkIfLiquidZone()) {
         _buyHousing(buildingSettings);
     } else {
         let boughtHousing = false;
