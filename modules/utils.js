@@ -403,7 +403,7 @@ function getPriorityOrder() {
 	if (game.global.universe === 2) settingsList = ['Desolation Gear Scum', 'Prestige Raiding', 'Smithy Farm', 'Map Farm', 'Tribute Farm', 'Worshipper Farm', 'Quagmire', 'Insanity', 'Alchemy', 'Hypothermia', 'HD Farm', 'Void Maps', 'Map Bonus'];
 
 	const settingNames = {
-		'Prestige Raiding': { settingName: 'prestigeRaiding' },
+		'Prestige Raiding': { settingName: 'raiding' },
 		'Bionic Raiding': { settingName: 'bionicRaiding' },
 		'Map Farm': { settingName: 'mapFarm' },
 		'HD Farm': { settingName: 'hdFarm' },
@@ -458,4 +458,8 @@ function getPriorityOrder() {
 		return a.priority > b.priority ? 1 : -1;
 	});
 	return order;
+}
+
+function getPerkModifier(what) {
+	return game.portal[what].modifier || 0;
 }
