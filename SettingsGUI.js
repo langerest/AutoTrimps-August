@@ -148,7 +148,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'multitoggle', 1, null, 'Core', [1, 2]);
 		createSetting('upgradeType',
-			function () { return (['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords']) },
+			function () { return (['Manual Upgrades', 'Buy All Upgrades', 'Upgrades No Coords']) },
 			function () {
 				let description = "<p>Controls what you upgrade.</p>";
 				description += "<p><b>Manual Upgrades</b><br>Disables this setting.</p>";
@@ -957,15 +957,14 @@ function initialiseAllSettings() {
 			'dropdown', 'Off', function () {
 				let equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
 				if (game.global.slowDone) {
-					equips.push('Harmbalest');
-					equips.push('GambesOP');
+					equips.push('Harmbalest', 'GambesOP');
 				}
 				return equips;
 			}, "Equipment", [1, 2]);
 		createSetting('prestigeClimbZone',
 			function () { return ('PC: Force Prestige Z') },
 			function () {
-				let description = "<p>On and after this zone is reached, always try to prestige for everything immediately regardless of <b>Prestige Climb</b> input unless it is set to <b>Off</b>.</p>";
+				let description = "<p>On and after this zone is reached, always try to prestige for everything immediately regardless of your <b>Prestige Climb</b> input unless it is set to <b>Off</b>.</p>";
 				description += "<p>The <b>Prestige Skip</b> setting has the potential to disable this if it's enabled.</p>";
 				description += "<p><b>Disable with -1.</b></p>";
 				description += "<p><b>Recommended:</b> The zone you start heavily slowing down</p>";
@@ -974,7 +973,7 @@ function initialiseAllSettings() {
 		createSetting('prestigeClimbSkip',
 			function () { return ('PC: Prestige Skip') },
 			function () {
-				let description = "<p>Will stop <b>Presige Climb</b> from running if you have 2 or more unbought prestiges (besides Supershield) in your upgrades window.</p>";
+				let description = "<p>Will stop <b>Prestige Climb</b> from running if you have 2 or more unbought prestiges (besides Supershield) in your upgrades window.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, "Equipment", [1, 2]);
@@ -1790,7 +1789,7 @@ function initialiseAllSettings() {
 				let description = "<p>Shield to use during <b>Archaeology</b> when your army is dead and breeding.</p>";
 				description += "<p>This will override all other heirloom swapping features when active!</p>";
 				description += "<p>Should ideally be a shield with the <b>Breedspeed</b> modifier.</p>";
-				description += "<p>Hits Survived & Map Bonus Ratio won't be disabled when this swaps shields so remember to level other modifiers as well.</p>";
+				description += "<p>Mapping decisions will be disabled when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Challenges', [2],
@@ -2102,7 +2101,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
-
 		createSetting('trapperTrap',
 			function () { return ('T: Disable Trapping') },
 			function () {
@@ -2112,9 +2110,8 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
-
 		createSetting('trapperArmyPct',
-			function () { return ('T: Army Pct') },
+			function () { return ('T: Army Percent') },
 			function () {
 				let description = "<p>The percentage of owned trimps that you would like to send out when you need a new army.</p>";
 				description += "<p>If set to <b>0 or below</b> it will assume this is set to 100% and always send armies if possible.</p>";
@@ -2122,7 +2119,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
-
 		createSetting('trapperShield',
 			function () { return ('T: Shield') },
 			function () {
@@ -2132,7 +2128,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'textValue', 'undefined', null, 'C2', [1, 2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
-			
 		createSetting('trapperWorldStaff',
 			function () { return ('T: World Staff') },
 			function () {
@@ -2144,7 +2139,6 @@ function initialiseAllSettings() {
 			}, 'textValue', 'undefined', null, 'C2', [1,2],
 			function () { return (getPageSetting('trapper', currSettingUniverse) && autoTrimpSettings.trapper.require()) });
 
-		//Mapology
 		createSetting('mapology',
 			function () { return ('Mapology') },
 			function () {
@@ -2163,12 +2157,23 @@ function initialiseAllSettings() {
 			}, 'dropdown', 'Bootboost', function () {
 				let equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
 				if (game.global.slowDone) {
-					equips.push('Harmbalest')
-					equips.push('GambesOP')
+					equips.push('Harmbalest', 'GambesOP');
 				}
 				return equips;
 			}, 'C2', [1],
 			function () { return (getPageSetting('mapology', currSettingUniverse) && autoTrimpSettings.mapology.require()) });
+
+		createSetting('lead',
+			function () { return ('Lead') },
+			function () {
+				let description = "<p>Enabling this will disable mapping on odd zones and will only map when you're at or past cell 90 on even zones to ensure the enemies Momentum buff is providing as small a benefit as possible.</p>";
+				description += "<p>If you are in a Spire or the final zone of a nature band then it will map on that zone even if it is an odd zone.</p>";
+				description += "<p>Be careful with how you setup your mapping when this is enabled as it will skip mapping lines that are set to run on odd zones!</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', false, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 180) });
 
 		createSetting('frigid',
 			function () { return ('Frigid') },
@@ -2178,6 +2183,15 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 460) });
+		createSetting('frigidSwapZone',
+			function () { return ('F: Heirloom Swap Zone') },
+			function () {
+				let description = "<p>The zone you'd like to swap to your afterpush shield during Frigid.</p>";
+				description += "<p>This overrides the " + _getChallenge2Info() + " heirloom swap setting input when set above <b>0</b>.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (getPageSetting('frigid', currSettingUniverse) && autoTrimpSettings.frigid.require()) });
 
 		//Experience
 		createSetting('experience',
@@ -2400,13 +2414,21 @@ function initialiseAllSettings() {
 			function () { return ('Berserk') },
 			function () {
 				let description = "<p>Enable this if you want the script to perform additional actions during the <b>Berserk</b> challenge.</p>";
-				description += "<p>If enabled it will disable mapping if your army is alive in the world and you have more than 0 stacks of Frenzy buff and only allows mapping settings with a Berserk challenge line to be run.</p>";
+				description += "<p>If enabled it will only allows mapping settings with a Berserk challenge line to be run.</p>";
 				description += "<p>If your army dies then it will go into a level 6 map and farm until you have max Frenzied stacks to ensure you're always the strongest you can be. It <b>will</b> also abandon maps that are in the middle of being run to go obtain these stacks!</p>";
-				description += "<p>Make sure you setup appropriate mapping lines to farm enough should you die. I highly recommend repeat every 1 zone lines for HD Farm, Tribute Farm and Smithy Farm.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 115) });
+		createSetting('berserkDisableMapping',
+			function () { return ('B: Disable Mapping') },
+			function () {
+				let description = "<p>Enabling this setting will disable mapping until your army dies so that you can extend your lives as long as possible.</p>";
+				description += "<p>When using this make sure you setup appropriate mapping lines to farm enough should you die. I highly recommend repeat every 1 zone lines for HD Farm, Tribute Farm and Smithy Farm.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'C2', [2],
+			function () { return (getPageSetting('berserk', currSettingUniverse) && autoTrimpSettings.berserk.require()) });
 
 		//Pandemonium
 		createSetting('pandemonium',
@@ -2421,7 +2443,7 @@ function initialiseAllSettings() {
 		createSetting('pandemoniumDestack',
 			function () { return ('P: HD Ratio') },
 			function () {
-				let description = "<p>What HD ratio cut-off to use when farming for the Improbability. If this setting is 100, the script will destack until you can kill the Improbability in 100 average hits or there are no Pademonium stacks remaining to clear.</p>";
+				let description = "<p>What HD ratio cut-off to use when farming for the Improbability. If this setting is 100, the script will destack until you can kill the Improbability in 100 average hits or there are no Pandemonium stacks remaining to clear.</p>";
 				description += "<p>If set to <b>0 or below</b> it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
@@ -2589,9 +2611,6 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
-		//Desolation Prestige Scumming
-		//Currently only visible to select people for testing purposes.
-		//Should be functional but can't be sure until it has been tested.
 		createSetting('desolationSettings',
 			function () { return ('Desolation Settings') },
 			function () {
@@ -2613,6 +2632,23 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 201) });
+		createSetting('smithlessFarmTime',
+			function () { return ('S: Max Farm Time') },
+			function () {
+				let description = "<p>The max amount of time in minutes you'd like to farm for stats.</p>";
+				description += "<p>Set to <b>0</b> to disable farming and set to <b>-1 or below</b> to farm forever.</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [2],
+			function () { return (getPageSetting('smithless', currSettingUniverse) && autoTrimpSettings.smithless.require()) });
+		createSetting('smithlessMapBonus',
+			function () { return ('S: Max Map Bonus') },
+			function () {
+				let description = "<p>Will get max map bonus stacks when fighting against an Ubersmith.</p>";
+				description += "<p>It will still obtain map bonus stacks even if you disable or it goes past the time input in the farm time setting.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'C2', [2],
+			function () { return (getPageSetting('smithless', currSettingUniverse) && autoTrimpSettings.smithless.require()) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -3010,6 +3046,19 @@ function initialiseAllSettings() {
 			},
 			'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+			
+		createSetting('heirloomBreed',
+			function () { return ('Breed') },
+			function () {
+				let description = "<p>Shield to use when your army is dead and breeding.</p>";
+				description += "<p>This will override all other heirloom swapping features when active!</p>";
+				description += "<p>Should ideally be a shield with the <b>Breedspeed</b> modifier.</p>";
+				description += "<p>Mapping decisions will be disabled when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
+				if (currSettingUniverse === 1) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoid',
 			function () { return ('Void') },
@@ -3248,7 +3297,8 @@ function initialiseAllSettings() {
 				let description = "<p>Overrides <b>Rarity to Keep</b> recycling heirlooms of a higher quality and instead allows the script to look at if they'd be worth keeping.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirloom', [1, 2]);
+			}, 'boolean', false, null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoModTarget',
 			function () { return ('Mod Target Count') },
@@ -4094,7 +4144,7 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Display', [0]);
 		createSetting('displayHeHr',
-			function () { return (_getPrimaryResourceInfo().abv + '/hr status') },
+			function () { return (_getPrimaryResourceInfo().name + ' Per Hour Status') },
 			function () {
 				let description = "<p>Enables the display of your " + _getPrimaryResourceInfo().name.toLowerCase() + " per hour.</p>";
 				return description;
@@ -4180,25 +4230,25 @@ function initialiseAllSettings() {
 	//Export/Import/Default
 	const displayImport = true;
 	if (displayImport) {
-		createSetting('ImportAutoTrimps',
+		createSetting('importAutoTrimps',
 			function () { return ('Import AutoTrimps') },
 			function () {
 				let description = "<p>Import a AutoTrimps settings file.</p>";
 				return description;
 			}, 'infoclick', null, 'ImportExportTooltip("importAutoTrimps")', 'Import Export', [0]);
-		createSetting('ExportAutoTrimps',
+		createSetting('exportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () {
 				let description = "<p>Export your AutoTrimps Settings as a output string text formatted in JSON.</p>";
 				return description;
 			}, 'infoclick', null, 'ImportExportTooltip("exportAutoTrimps")', 'Import Export', [0]);
-		createSetting('DefaultAutoTrimps',
+		createSetting('defaultAutoTrimps',
 			function () { return ('Reset To Default') },
 			function () {
 				let description = "<p>Reset everything to the way it was when you first installed the script.</p>";
 				return description;
 			}, 'infoclick', null, 'ImportExportTooltip("resetDefaultSettingsProfiles"\'")', 'Import Export', [0]);
-		createSetting('DownloadDebug',
+		createSetting('downloadForDebug',
 			function () { return ('Download For Debug') },
 			function () {
 				let description = "<p>Will download both your save and the scripts settings so that they can be debugged easier.</p>";
@@ -4206,7 +4256,7 @@ function initialiseAllSettings() {
 			}, 'action', null, 'ImportExportTooltip("exportAutoTrimps", "downloadSave")', 'Import Export', [0]);
 
 		createSetting('updateReload',
-			function () { return ('Update Reload') },
+			function () { return ('Reload For Updates') },
 			function () {
 				let description = "<p>Will reload your Trimps window when an AutoTrimps update is available.</p>";
 				description += "<p><b>Updates have the potential to have errors that would break the script so be aware this might not be wise to enable.</b></p>";
@@ -4571,6 +4621,7 @@ function settingChanged(id, currUniverse) {
 		buildingsType: _setBuildingClasses,
 		displayHideFightButtons: _setFightButtons,
 		timeWarpDisplay: _setTimeWarpUI,
+		displayEnhancedGrid: MODULES.fightinfo.Update,
 		archaeology: archaeologyAutomator
 	};
 
@@ -4982,9 +5033,9 @@ function _settingsToLineBreak() {
 	const breakAfterEquipment = ['equipPercent', 'equipNoShields', 'equipShieldBlock'];
 	const breakAfterCombat = ['frenzyCalc', 'scryerEssenceOnly'];
 	const breakAfterJobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireDaily'];
-	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'frigid', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserk', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
+	const breakAfterC2 = ['c2disableFinished', 'c2Fused', 'c2AutoDStanceSpire', 'duelShield', 'trapperWorldStaff', 'mapologyPrestige', 'lead', 'frigidSwapZone', 'experienceEndBW', 'witherShield', 'questSmithyMaps', 'mayhemSwapZone', 'stormStacks', 'berserkDisableMapping', 'pandemoniumSwapZone', 'glassStacks', 'desolationSettings'];
 	const breakAfterBuildings = ['autoGigaDeltaFactor'];
-	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff', 'mapologyPrestige'];
+	const breakAfterChallenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'toxicitySettings', 'archaeologyString3', 'exterminateWorldStaff'];
 	const breakAfterHeirlooms = ['heirloomCompressedSwap', 'heirloomWindStack', 'heirloomSwapHDCompressed', 'heirloomStaffFragment', 'heirloomStaffScience'];
 	const breakAfterMagma = ['AutoGenC2'];
 	const breakAfterNature = ['AutoIce', 'autoenlight', 'iceEnlight', 'iceEnlightDaily'];
@@ -5281,14 +5332,14 @@ function _createMessagesButton() {
 			onmouseover: 'tooltip("Toggle AutoTrimps Messages", "customText", event, "Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.")',
 			onmouseout: 'tooltip("hide")'
 		});
-
+		const btnDisplay = `btn-${getPageSetting('spamMessages').show ? 'success' : 'danger'}`;
 		let atBtnText = _createElement(
 			'button',
 			{
 				id: 'AutoTrimpsFilter',
 				type: 'button',
-				onClick: "filterMessage_AT('AutoTrimps')",
-				class: 'btn btn-success logFlt'
+				onClick: 'filterMessage_AT()',
+				class: `btn ${btnDisplay} logFlt`
 			},
 			['AT Messages']
 		);

@@ -115,8 +115,8 @@ function buyJobs(forceRatios) {
 		return;
 	}
 
-	var jobSettings = getPageSetting('jobSettingsArray');
-	freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - game.resources.trimps.employed;
+	const jobSettings = getPageSetting('jobSettingsArray');
+	let freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - game.resources.trimps.employed;
 
 	var ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	var ratioWorkerCount = 0;
@@ -242,7 +242,7 @@ function buyJobs(forceRatios) {
 		//Check if bone shrine wants to force override our job ratio
 		if (forceRatios) {
 			if (typeof forceRatios !== 'string') {
-				debug('Error! forceRatios is not setup as a string! Not buying jobs until this has been fixed!');
+				debug(`Error! forceRatios is not setup as a string! Not buying jobs until this has been fixed!`);
 				return;
 			}
 			workerRatio = forceRatios;

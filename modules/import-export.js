@@ -117,7 +117,7 @@ function ImportExportTooltip(what, event) {
 		let saveGame = JSON.parse(LZString.decompressFromBase64(saveFile));
 		document.getElementById('confirmTooltipBtn').click();
 		// Pausing save and setting options to my preferences
-		if (what === 'ExportAutoTrimps') {
+		if (what === 'exportAutoTrimps') {
 			saveGame.options.menu.pauseGame.enabled = 1;
 			saveGame.options.menu.timeAtPause = new Date().getTime();
 			saveGame.options.menu.standardNotation.enabled = 0;
@@ -258,7 +258,7 @@ function _displayC2Table() {
 	};
 
 	Object.keys(challengeOrders).forEach((type) => {
-		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true);
+		let challenges = challengesUnlockedObj(type === 'c2' ? 1 : 2, true, true);
 		challenges = filterAndSortChallenges(challenges, 'c2');
 		const array = challengeOrders[type].filter((item) => challenges.includes(item));
 		processArray(type, array, runnerLists[type]);
@@ -341,15 +341,15 @@ function loadAutoTrimps() {
 	try {
 		importBox = document.getElementById('importBox').value.replace(/[\n\r]/gm, '');
 		autoTrimpsSettings = JSON.parse(importBox);
-		if (autoTrimpsSettings === null || autoTrimpsSettings === '') return void debug('Error importing AT settings, the string is empty.', 'profile');
+		if (autoTrimpsSettings === null || autoTrimpsSettings === '') return void debug(`Error importing AT settings, the string is empty.`, 'profile');
 	} catch (error) {
 		return debug(`Error importing AT settings, the string is bad. ${error.message}`, 'profile');
 	}
 
 	if (!autoTrimpsSettings) {
-		return debug('Error importing AT settings, the string is empty.', 'profile');
+		return debug(`Error importing AT settings, the string is empty.`, 'profile');
 	}
-	debug('Importing new AT settings file...', 'profile');
+	debug(`Importing new AT settings file...`, 'profile');
 	resetAutoTrimps(autoTrimpsSettings);
 }
 
@@ -603,5 +603,5 @@ function pushSpreadsheetData() {
 			});
 		}
 	}, 300);
-	debug('Spreadsheet update complete.', 'other');
+	debug(`Spreadsheet update complete.`, 'other');
 }

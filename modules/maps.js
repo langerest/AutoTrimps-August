@@ -104,14 +104,7 @@ function makeAutomapStatusTooltip(mouseover) {
 	}
 
 	//HD Ratios
-	tooltipText +=
-		'<br>' +
-		`<b>HD Ratio Info</b><br>` +
-		`${hdRatioText}<br>` +
-		`World HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatio)}</b><br>` +
-		`Map HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioMap)}</b><br>` +
-		`Void HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioVoid)}</b><br>` +
-		`${mapStacksText}<br>`;
+	tooltipText += '<br>' + `<b>HD Ratio Info</b><br>` + `${hdRatioText}<br>` + `World HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatio)}</b><br>` + `Map HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioMap)}</b><br>` + `Void HD Ratio ${game.global.universe === 1 ? '(in X formation)' : ''} <b>${prettify(hdStats.hdRatioVoid)}</b><br>` + `${mapStacksText}<br>`;
 
 	if (mouseover) {
 		tooltipText += '")';
@@ -347,10 +340,9 @@ function shouldAbandon(zoneCheck = true) {
 }
 
 function _berserkDisableMapping() {
-	if (!challengeActive('Berserk')) return false;
-	if (!getPageSetting('berserk')) return false;
+	if (!challengeActive('Berserk') || !getPageSetting('berserk')) return false;
 	if (game.global.mapsActive || game.global.preMapsActive) return false;
-	if (!game.global.fighting || game.global.soldierHealth <= 0) return false;
+	if (!getPageSetting('berserkDisableMapping') || !game.global.fighting || game.global.soldierHealth <= 0) return false;
 	if (game.challenges.Berserk.frenzyStacks > 0) return true;
 }
 
@@ -358,6 +350,16 @@ function _noMappingChallenges(ignoreChallenge) {
 	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) return true;
 	if (!ignoreChallenge && challengeActive('Mapology')) return true;
 	if (challengeActive('Exterminate')) return true;
+}
+
+function _leadDisableMapping() {
+	if (!challengeActive('Lead') || !getPageSetting('lead') || game.global.spireActive) return false;
+
+	const evenZone = game.global.world % 2 === 0;
+	const clearedCell = game.global.lastClearedCell + 2 < 90;
+	const natureFinalZone = game.global.world >= getNatureStartZone() && getEmpowerment() !== getZoneEmpowerment(game.global.world + 1);
+
+	return !(clearedCell && (!evenZone || natureFinalZone));
 }
 
 function autoMaps() {
@@ -380,6 +382,11 @@ function autoMaps() {
 
 	if (_lifeMapping()) return;
 
+	if (_leadDisableMapping()) {
+		if (game.global.preMapsActive) mapsClicked();
+		return;
+	}
+
 	if (_vanillaMAZ()) return;
 
 	_autoMapsDefaults();
@@ -390,19 +397,14 @@ function autoMaps() {
 
 	mapObj.selectedMap = _setSelectedMap(mapObj.selectedMap, mapObj.voidMap, mapObj.optimalMap);
 
-	//Map Repeat
-	if (game.global.mapsActive) {
-		_setMapRepeat();
-	}
+	if (game.global.mapsActive) _setMapRepeat();
 
 	if (!game.global.preMapsActive && !game.global.mapsActive && mapObj.selectedMap !== 'world') {
 		if (!game.global.switchToMaps && shouldAbandon()) mapsClicked();
 		if (game.global.switchToMaps) mapsClicked();
 	}
 
-	if (game.global.preMapsActive) {
-		_autoMapsCreate(mapObj);
-	}
+	if (game.global.preMapsActive) _autoMapsCreate(mapObj);
 
 	_slowScumCheck();
 }
@@ -466,7 +468,7 @@ function _checkSitInMaps() {
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
 		if (!game.global.preMapsActive) {
 			mapsClicked(true);
-			debug('AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.', 'other');
+			debug(`AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.`, 'other');
 		}
 		return true;
 	}
@@ -483,12 +485,12 @@ function _lifeMapping() {
 	if (lifeZone > 0 && lifeStacks > 0 && game.global.world >= lifeZone && game.challenges.Life.stacks <= lifeStacks) {
 		if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
 		if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
-			MODULES.maps.livingActive = true;
+			MODULES.maps.lifeActive = true;
 			if (game.global.fighting || game.global.preMapsActive) mapsClicked();
 			return true;
 		}
 	}
-	MODULES.maps.livingActive = false;
+	MODULES.maps.lifeActive = false;
 }
 
 function _autoMapsDefaults() {
@@ -626,7 +628,7 @@ function _purchaseMap(lowestMap) {
 	if (result === -2) {
 		recycleMap(game.global.mapsOwnedArray.indexOf(lowestMap));
 		result = buyMap();
-		if (result === -2) debug('AutoMaps unable to recycle to buy map!', 'maps');
+		if (result === -2) debug(`AutoMaps unable to recycle to buy map!`, 'maps');
 	}
 	if (result === 1) {
 		const mapCost = updateMapCost(true);

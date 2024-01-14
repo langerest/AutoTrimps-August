@@ -1,9 +1,10 @@
 function callBetterAutoFight() {
 	avoidEmpower();
 	trimpicide();
-	if (getPageSetting('autoFight') === 0) return;
-	else if (getPageSetting('autoFight') === 1) betterAutoFight();
-	else if (getPageSetting('autoFight') === 2) betterAutoFightVanilla();
+	const autoFightSetting = getPageSetting('autoFight');
+	if (autoFightSetting === 0) return;
+	else if (autoFightSetting === 1) betterAutoFight();
+	else if (autoFightSetting === 2) betterAutoFightVanilla();
 }
 
 function newArmyRdy() {
@@ -28,9 +29,7 @@ function betterAutoFight() {
 function betterAutoFightVanilla() {
 	if (game.global.autoBattle && game.global.pauseFight && !game.global.spireActive) pauseFight();
 	if (game.global.gridArray.length === 0 || !game.upgrades.Battle.done || game.global.fighting) return;
-	if (game.global.world === 1 && !game.global.fighting && !game.upgrades.Bloodlust.allowed) {
-		battle(true);
-	}
+	if (game.global.world === 1 && !game.global.fighting && !game.upgrades.Bloodlust.allowed) battle(true);
 }
 
 //Suicides trimps if we don't have max anticipation stacks and sending a new army would give us max stacks.
@@ -73,28 +72,29 @@ function armyDeath() {
 	const enemy = getCurrentEnemy();
 	const fluctuation = game.global.universe === 2 ? 1.5 : 1.2;
 	const runningDaily = challengeActive('Daily');
+	const dailyChallenge = game.global.dailyChallenge;
 	if (!runningDaily) return false;
 	if (game.global.mapsActive) return false;
-	if (runningDaily && typeof game.global.dailyChallenge.empower === 'undefined') return false;
+	if (runningDaily && typeof dailyChallenge.empower === 'undefined') return false;
 	if (!getPageSetting('avoidEmpower')) return false;
 	if (game.global.soldierHealth <= 0) return false;
 
 	//Trimps Stats
-	var ourHealth = game.global.soldierHealth;
-	var block = game.global.soldierCurrentBlock;
+	let ourHealth = game.global.soldierHealth;
+	let block = game.global.soldierCurrentBlock;
 	if (game.global.formation !== 0) block = game.global.formation === 3 ? (block /= 4) : (block *= 2);
 	enemyAttack = enemy.attack * fluctuation;
 
 	if (getEmpowerment() === 'Ice') enemyAttack *= game.empowerments.Ice.getCombatModifier();
 
-	if (runningDaily && !game.global.mapsActive && typeof game.global.dailyChallenge.empower !== 'undefined') {
-		if (typeof game.global.dailyChallenge.empower !== 'undefined') enemyAttack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
+	if (runningDaily && !game.global.mapsActive && typeof dailyChallenge.empower !== 'undefined') {
+		if (typeof dailyChallenge.empower !== 'undefined') enemyAttack *= dailyModifiers.empower.getMult(dailyChallenge.empower.strength, dailyChallenge.empower.stacks);
 	}
 
-	var pierce = !game.global.mapsActive ? getPierceAmt() : 0;
-	var attackMinusBlock = enemyAttack - game.global.soldierCurrentBlock;
+	const pierce = !game.global.mapsActive ? getPierceAmt() : 0;
+	let attackMinusBlock = enemyAttack - game.global.soldierCurrentBlock;
 	if (pierce > 0) {
-		var atkPierce = pierce * enemyAttack;
+		const atkPierce = pierce * enemyAttack;
 		if (attackMinusBlock < atkPierce) attackMinusBlock = atkPierce;
 	}
 	if (attackMinusBlock <= 0) attackMinusBlock = 0;
@@ -102,11 +102,11 @@ function armyDeath() {
 
 	if (runningDaily) {
 		//Enemy crits
-		if (typeof game.global.dailyChallenge.crits !== 'undefined') enemyAttack *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		if (typeof dailyChallenge.crits !== 'undefined') enemyAttack *= dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 		//Bogged
-		if (typeof game.global.dailyChallenge.bogged !== 'undefined') ourHealth -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength);
+		if (typeof dailyChallenge.bogged !== 'undefined') ourHealth -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(dailyChallenge.bogged.strength);
 		//Plagued
-		if (typeof game.global.dailyChallenge.plague !== 'undefined') ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks);
+		if (typeof dailyChallenge.plague !== 'undefined') ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(dailyChallenge.plague.strength, dailyChallenge.plague.stacks);
 	}
 
 	if (enemy.corrupted) {
@@ -136,11 +136,10 @@ function avoidEmpower() {
 }
 
 function setEquality(equality) {
-	if (game.portal.Equality.disabledStackCount !== equality) {
-		game.portal.Equality.disabledStackCount = equality;
-		manageEqualityStacks();
-		updateEqualityScaling();
-	}
+	if (game.portal.Equality.disabledStackCount === equality) return;
+	game.portal.Equality.disabledStackCount = equality;
+	manageEqualityStacks();
+	updateEqualityScaling();
 }
 
 function equalityManagementBasic() {
@@ -154,16 +153,16 @@ function equalityManagementBasic() {
 	}
 
 	//Looking to see if the enemy that's currently being fought is fast.
-	var fastEnemy = MODULES.fightinfo.fastImps.includes(getCurrentEnemy().name);
+	const fastEnemy = MODULES.fightinfo.fastImps.includes(getCurrentEnemy().name);
 	//Checking if the map that's active is a Deadly voice map which always has first attack.
-	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === 'Void' && getCurrentMapObject().voidBuff === 'doubleAttack';
+	const voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === 'Void' && getCurrentMapObject().voidBuff === 'doubleAttack';
 	//Checking if the Frenzy buff is active.
-	var noFrenzy = game.portal.Frenzy.frenzyStarted === '-1' && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
+	const noFrenzy = game.portal.Frenzy.radLevel > 0 && game.portal.Frenzy.frenzyStarted === -1 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 	//Checking if the experience buff is active during Exterminate.
-	var experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
+	const experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	//Checking to see if the Glass challenge is being run where all enemies are fast.
-	var runningGlass = challengeActive('Glass');
-	var runningDesolation = challengeActive('Desolation');
+	const runningGlass = challengeActive('Glass');
+	const runningDesolation = challengeActive('Desolation');
 
 	//Toggles equality scaling on
 	if ((fastEnemy && !experienced) || voidDoubleAttack || noFrenzy || runningGlass || runningDesolation) {
@@ -202,20 +201,21 @@ function equalityManagement() {
 	const zone = type === 'world' || !mapping ? game.global.world : mapObject.level;
 	const bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? zone : 0;
 	const difficulty = mapping ? mapObject.difficulty : 1;
-	const armyReady = newArmyRdy();
+	const armyReady = newArmyRdy() || getPageSetting('heirloomBreed') !== 'undefined';
 	const maxEquality = game.portal.Equality.radLevel;
 	let enemyDamageMult = 1;
 
 	//Daily modifiers active
 	const isDaily = challengeActive('Daily');
-	const dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined'; //Empower
+	const dailyChallenge = game.global.dailyChallenge;
+	const dailyEmpower = isDaily && typeof dailyChallenge.empower !== 'undefined'; //Empower
 	const dailyEmpowerToggle = dailyEmpower && getPageSetting('empowerAutoEquality');
-	const dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
-	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
-	const explosiveMult = dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
-	const dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
-	const dailyBloodthirst = isDaily && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
-	const dailyRampage = isDaily && typeof game.global.dailyChallenge.rampage !== 'undefined'; //Rampage (trimp attack buff)
+	const dailyCrit = isDaily && typeof dailyChallenge.crits !== 'undefined'; //Crit
+	const dailyExplosive = isDaily && typeof dailyChallenge.explosive !== 'undefined'; //Dmg on death
+	const explosiveMult = dailyExplosive ? 1 + dailyModifiers.explosive.getMult(dailyChallenge.explosive.strength) : 1;
+	const dailyWeakness = isDaily && typeof dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
+	const dailyBloodthirst = isDaily && typeof dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
+	const dailyRampage = isDaily && typeof dailyChallenge.rampage !== 'undefined'; //Rampage (trimp attack buff)
 
 	//Challenge conditions
 	const runningUnlucky = challengeActive('Unlucky');
@@ -279,8 +279,7 @@ function equalityManagement() {
 			if (runningUnlucky) unluckyDmg = adjustDamage(unluckyDmg);
 		}
 	}
-	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
-	if (dailyWeakness) ourDmg *= 1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100;
+	if (dailyRampage) ourDmg *= dailyModifiers.rampage.getMult(dailyChallenge.rampage.strength, dailyChallenge.rampage.stacks);
 
 	//Enemy stats
 	const enemy = getCurrentEnemy();
@@ -297,15 +296,15 @@ function equalityManagement() {
 	//Daily Modifiers
 	//Empower related modifiers in world
 	if ((dailyEmpowerToggle && !mapping) || MODULES.maps.slowScumming) {
-		if (dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		if (dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 		if (dailyExplosive || MODULES.maps.slowScumming) ourDmgMax = maxDmg * gammaDmg;
 	}
 	//Empower modifiers in maps.
 	if (type === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming) {
-		if (dailyEmpowerToggle && dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		if (dailyEmpowerToggle && dailyCrit) enemyDamageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 		if (dailyExplosive) enemyDamageMult += explosiveMult;
 	}
-	if (dailyCrit && !dailyEmpower && (type === 'world' || type === 'void') && gammaToTrigger > 1) enemyDamageMult += 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+	if (dailyCrit && !dailyEmpower && (type === 'world' || type === 'void') && gammaToTrigger > 1) enemyDamageMult += 1 + dailyModifiers.crits.getMult(dailyChallenge.crits.strength);
 	//Mayhem poison
 	if (enemyCanPoison) enemyDamageMult += 1.2;
 
@@ -331,6 +330,8 @@ function equalityManagement() {
 		else if (noFrenzy && (game.portal.Frenzy.frenzyActive() || enemyHealth / ourDmg > 10)) fastEnemy = true;
 	}
 
+	if (dailyWeakness) ourDmg *= 1 - ((dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * dailyChallenge.weakness.strength) / 100;
+
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
 	//Definitely need to add a check here for if we can die enough to get the bonus.
 	if (runningDuel && getPageSetting('duel') && getPageSetting('duelHealth') && fastEnemy && calcOurHealth(false, type) * 10 * 0.9 > ourHealth && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
@@ -340,7 +341,7 @@ function equalityManagement() {
 
 	//Suiciding to get max bloodthirst stacks if our avg attacks to kill is greater than the attacks to proc a bloodthirst stack.
 	if (dailyBloodthirst && mapping && fastEnemy && getPageSetting('bloodthirstMaxStacks')) {
-		const bloodthirst = game.global.dailyChallenge.bloodthirst;
+		const bloodthirst = dailyChallenge.bloodthirst;
 		const maxStacks = dailyModifiers.bloodthirst.getMaxStacks(bloodthirst.strength);
 		const freq = dailyModifiers.bloodthirst.getFreq(bloodthirst.strength);
 		const stacksToProc = freq - (bloodthirst.currStacks % freq);
