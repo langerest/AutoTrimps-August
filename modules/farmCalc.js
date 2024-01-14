@@ -31,16 +31,17 @@ function callAutoMapLevel(settingName, special, maxLevel, minLevel) {
 
 //New setup!
 function callAutoMapLevel_new(mapName, special) {
-	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking', 'Desolation Destacking'];
+	const speedSettings = ['Map Bonus', 'Experience', 'Mayhem Destacking'];
 	const mapType = speedSettings.includes(mapName) ? 'speed' : 'loot';
 	const mapModifiers = {
 		special: special || trimpStats.mapSpecial,
 		biome: mapSettings.biome || trimpStats.mapBiome
 	};
+	const lootFunction = mapName === 'Desolation Destacking' ? lootDestack : lootDefault;
 
 	if (hdStats.autoLevelZone !== game.global.world) {
 		hdStats.autoLevelZone = game.global.world;
-		hdStats.autoLevelInitial = stats();
+		hdStats.autoLevelInitial = stats(lootFunction);
 	}
 
 	let mapLevel = mapSettings.levelCheck;
@@ -513,7 +514,7 @@ function populateFarmCalcData() {
 }
 
 //Return a list of efficiency stats for all sensible zones
-function stats() {
+function stats(lootFunction) {
 	let saveData = populateFarmCalcData();
 	let stats = [];
 	let extra = 0;
@@ -527,7 +528,7 @@ function stats() {
 			saveData.challenge_health = coords;
 			saveData.challenge_attack = coords;
 		}
-		let tmp = zone_stats(mapLevel, saveData.stances, saveData);
+		let tmp = zone_stats(mapLevel, saveData.stances, saveData, lootFunction);
 		if (tmp.value < 1 && mapLevel >= saveData.zone) continue;
 
 		//Check fragment cost of each map and remove them from the check if they can't be afforded.
@@ -541,15 +542,25 @@ function stats() {
 	return [stats, saveData.stances];
 }
 
+function lootDefault(zone, saveData)
+{
+	return 100 * (zone < saveData.zone ? 0.8 ** (saveData.zone - saveData.reducer - zone) : 1.1 ** (zone - saveData.zone));
+}
+
+function lootDestack(zone, saveData)
+{
+	return zone <= saveData.zone ? 0 : zone - saveData.zone;
+}
+
 //Return efficiency stats for the given zone
-function zone_stats(zone, stances, saveData) {
+function zone_stats(zone, stances, saveData, lootFunction) {
 	const result = {
 		mapLevel: zone - saveData.zone,
 		zone: 'z' + zone,
 		value: 0,
 		killSpeed: 0,
 		stance: '',
-		loot: 100 * (zone < saveData.zone ? 0.8 ** (saveData.zone - saveData.reducer - zone) : 1.1 ** (zone - saveData.zone)),
+		loot: lootFunction(zone, saveData),
 		canAffordPerfect: saveData.fragments >= mapCost(zone - saveData.zone, saveData.mapSpecial, saveData.mapBiome, [9, 9, 9])
 	};
 	if (!stances) stances = 'X';
