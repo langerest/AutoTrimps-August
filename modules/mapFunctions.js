@@ -2655,7 +2655,7 @@ function desolation(lineCheck, forceDestack) {
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
 
 	const destackHits = getPageSetting('desolationDestack') > 0 ? getPageSetting('desolationDestack') : Infinity;
-	const destackZone = getPageSetting('desolationZone') > 0 ? getPageSetting('desolationZone') : Infinity;
+	let destackZone = getPageSetting('desolationZone') > 0 ? getPageSetting('desolationZone') : Infinity;
 	const destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	const destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : Infinity;
 
