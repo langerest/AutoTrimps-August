@@ -6,7 +6,7 @@ function autoRoboTrimp() {
 	if (autoRoboTrimpSetting <= 0) return;
 
 	const shouldShriek = game.global.world >= autoRoboTrimpSetting && (game.global.world - parseInt(autoRoboTrimpSetting)) % 5 === 0;
-	if (shouldShriek && !game.global.useShriek) debug('Activated Robotrimp MagnetoShriek Ability @ z' + game.global.world, 'zone', '*podcast');
+	if (shouldShriek && !game.global.useShriek) debug(`Activated Robotrimp MagnetoShriek Ability at zone ${game.global.world}`, 'zone', '*podcast');
 	if (game.global.useShriek !== shouldShriek) magnetoShriek();
 }
 
@@ -642,13 +642,12 @@ function updateATVersion() {
 		}
 
 		if (versionNumber < '6.5.13') {
-			var values = ['value', 'valueU2'];
+			const values = ['value', 'valueU2'];
 			for (var z = 0; z < values.length; z++) {
-				var incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
+				const incrementMaps = tempSettings['raidingSettings'][values[z]][0].incrementMaps;
 				if (typeof tempSettings['raidingSettings'][values[z]][0] !== 'undefined') {
-					for (var y = 0; y < tempSettings['raidingSettings'][values[z]].length; y++) {
-						if (y === 0) continue;
-						var currSetting = tempSettings['raidingSettings'][values[z]][y];
+					for (let y = 1; y < tempSettings['raidingSettings'][values[z]].length; y++) {
+						const currSetting = tempSettings['raidingSettings'][values[z]][y];
 						autoTrimpSettings['raidingSettings'][values[z]][y].incrementMaps = incrementMaps;
 						autoTrimpSettings['raidingSettings'][values[z]][y].raidingzone = (currSetting.raidingzone - currSetting.world).toString();
 					}
@@ -804,6 +803,21 @@ function updateATVersion() {
 				}
 			}
 		}
+
+		if (versionNumber < '6.5.55') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			const settingName = 'voidMapSettings';
+			const values = ['value', 'valueU2'];
+			for (let z = 0; z < values.length; z++) {
+				if (typeof tempSettings[settingName][values[z]][0] !== 'undefined') {
+					for (var y = 1; y < tempSettings[settingName][values[z]].length; y++) {
+						let currSetting = tempSettings[settingName][values[z]][y];
+						autoTrimpSettings[settingName][values[z]][y].endzone = currSetting.maxvoidzone;
+					}
+				}
+			}
+			saveSettings();
+		}
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
@@ -864,23 +878,23 @@ function updateChangelogButton() {
 
 //Remakes challenge/setting popup if the user doesn't click confirm and it's not showing.
 function remakeTooltip() {
-	if (!MODULES.popups.challenge && !MODULES.popups.respecAtlantrimp && !MODULES.popups.portal) {
+	if (!MODULES.popups.challenge && !MODULES.popups.respecAncientTreasure && !MODULES.popups.portal) {
 		if (!MODULES.popups.challenge) delete hzeMessage;
 		return;
 	}
 
 	if (!game.global.lockTooltip) {
-		if (MODULES.popups.respecAtlantrimp) {
+		if (MODULES.popups.respecAncientTreasure) {
 			var respecName = !trimpStats.isC3 ? 'Radon ' : '' + 'Combat Respec';
 			if (game.global.universe === 1) respecName = 'Spire';
 			var description = '<p><b>Respeccing into the ' + respecName + ' preset.</b></p>';
-			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Disable Respec');
+			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAncientTreasure = false', '<b>NOTICE: Auto-Respeccing in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Disable Respec');
 		} else if (MODULES.popups.challenge) {
 			tooltip('confirm', null, 'update', hzeMessage, 'MODULES.popups.challenge = false, delete hzeMessage', 'AutoTrimps New Unlock!');
 		} else {
 			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone+=1; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
 		}
-	} else if (MODULES.popups.respecAtlantrimp) {
+	} else if (MODULES.popups.respecAncientTreasure) {
 		document.getElementById('tipTitle').innerHTML = '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>';
 	} else if (MODULES.popups.portal) {
 		document.getElementById('tipTitle').innerHTML = '<b>NOTICE: Auto-Portaling in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>';

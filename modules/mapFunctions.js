@@ -19,7 +19,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Shieldblock.allowed) return false;
 			if (aboveMapLevel && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
-			else if (game.mapUnlocks.BigWall.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -32,7 +32,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
 			if (aboveMapLevel && !game.talents.bounty.purchased) return true; //Don't bother before z16
-			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -42,10 +42,10 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'angerTimed',
 		universe: 1,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
 			if (game.global.world - 1 > map.level) return true; //Don't bother before z22
-			else if (game.mapUnlocks.Portal.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -57,7 +57,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (aboveMapLevel && game.portal.Relentlessness.locked) return true; //Unlock the Relentlessness perk
-			else if (game.mapUnlocks.AncientTreasure.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -69,7 +69,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) return true; //Unlock the Electricity challenge
-			else if (game.mapUnlocks.ThePrison.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -79,7 +79,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'bionicTimed',
 		universe: 1,
 		mapUnlock: true,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function () {
 			return false;
 		}
 	},
@@ -89,8 +89,8 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'starTimed',
 		universe: 1,
 		mapUnlock: true,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (game.mapUnlocks.ImplodingStar.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+		runConditions: function (map, mapSetting, liquified) {
+			if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -104,7 +104,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
 			if (aboveMapLevel && !game.talents.bounty.purchased) return true; // we need Bounty
-			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -114,10 +114,10 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: '',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (document.getElementById('portalBtn').style.display !== 'none') return false;
 			if (game.global.world - 1 > map.level && game.global.totalRadPortals === 0) return true; //Don't bother before z17
-			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -127,8 +127,8 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'palaceTimed',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (game.mapUnlocks.Prismalicious.canRunOnce && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
+		runConditions: function (map, mapSetting, liquified) {
+			if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
 	},
@@ -138,7 +138,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'atlantrimpTimed',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (!game.mapUnlocks.AncientTreasure.canRunOnce) return false;
 			else if (mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
@@ -150,7 +150,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: 'meltingTimed',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			if (!game.mapUnlocks.SmithFree.canRunOnce) return false;
 			if (!trimpStats.isC3 && !trimpStats.isDaily && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 
@@ -172,7 +172,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: '',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function () {
 			if (mapSettings.mapName === 'Quagmire Farm' && quagmire().shouldRun) return true;
 			return false;
 		}
@@ -183,7 +183,7 @@ MODULES.mapFunctions.uniqueMaps = Object.freeze({
 		speedrun: '',
 		universe: 2,
 		mapUnlock: false,
-		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
+		runConditions: function (map, mapSetting, liquified) {
 			const runningHypo = challengeActive('Hypothermia');
 			const regularRun = !runningHypo && mapSetting.enabled && game.global.world >= mapSetting.zone && game.global.lastClearedCell + 2 >= mapSetting.cell;
 			if (regularRun) return true;
@@ -281,7 +281,8 @@ function _obtainUniqueMap(uniqueMap) {
 }
 
 function _runUniqueMap(mapName) {
-	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
+	const mapObj = getCurrentMapObject();
+	if (game.global.mapsActive && mapObj.name === mapName) return;
 	if (getPageSetting('autoMaps') !== 1) return;
 	if (_insanityDisableUniqueMaps()) return;
 
@@ -289,7 +290,7 @@ function _runUniqueMap(mapName) {
 	const map = game.global.mapsOwnedArray.find((map) => map.name.includes(mapName));
 
 	if (map) {
-		if (game.global.mapsActive && getCurrentMapObject().name !== mapName) recycleMap_AT();
+		if (game.global.mapsActive && mapObj.name !== mapName) recycleMap_AT();
 		if (game.global.preMapsActive && game.global.currentMapId === '') {
 			selectMap(map.id);
 			runMap_AT();
@@ -424,25 +425,25 @@ function _findSettingsIndexVoidMaps(settingName, baseSettings, dailyAddition) {
 	for (let y = 1; y < baseSettings.length; y++) {
 		const currSetting = baseSettings[y];
 		let world = currSetting.world + voidReduction;
-		let maxVoidZone = currSetting.maxvoidzone + voidReduction;
+		let endzone = currSetting.endzone + voidReduction;
 		if (shouldSkipSetting(currSetting, world, settingName, dailyAddition)) continue;
 
 		for (let x = 0; x < zoneAddition + 1; x++) {
 			const shouldSkipLine = dropdowns.every((dropdown, index) => {
 				if (currSetting[dropdowns[0]] === 0 && currSetting[dropdowns[1]] === 0) return false;
-
+				if (currSetting[hdTypes[index]] === 'disabled') return false;
 				const obj = hdObject[currSetting[hdTypes[index]]];
 				const hdSetting = obj.hdStatVoid || obj.hdStat;
 				if (currSetting[hdTypes[index]].includes('Hits Survived')) return currSetting[dropdown] > hdSetting;
 				return currSetting[dropdown] < hdSetting;
 			});
-			if (shouldSkipLine && maxVoidZone !== game.global.world) continue;
-			if (maxVoidZone === game.global.world || game.global.world - world >= 0) {
+			if (shouldSkipLine && endzone !== game.global.world) continue;
+			if (endzone === game.global.world || game.global.world - world >= 0) {
 				settingIndex = y;
 				break;
 			}
 			world += zoneAddition;
-			maxVoidZone += zoneAddition;
+			endzone += zoneAddition;
 		}
 	}
 
@@ -481,6 +482,7 @@ function _setVoidMapsInitiator(setting, settingIndex) {
 	dropdowns.forEach((dropdown, index) => {
 		const title = dropdownTitles[index];
 		const type = hdTypes[index];
+		if (currSetting[type] === 'disabled') return;
 		const obj = hdObject[currSetting[type]];
 		const hdSetting = obj.hdStatVoid || obj.hdStat;
 
@@ -530,7 +532,6 @@ function _runVoidMaps(setting, mapName, settingName, settingIndex, defaultSettin
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, null, null, null, null, null);
 		resetMapVars();
-		MODULES.mapFunctions.afterVoids = false;
 		if (mapSettings.portalAfterVoids) autoPortalCheck(game.global.world);
 	}
 
@@ -671,8 +672,7 @@ function mapFarm(lineCheck) {
 
 function _runMapFarm(setting, mapName, settingName, settingIndex) {
 	const mapSpecial = getAvailableSpecials(setting.special);
-	let mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-	if (challengeActive('Wither') && mapLevel >= 0) mapLevel = -1;
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 	let repeatCounter = setting.repeat === -1 ? Infinity : setting.repeat;
 	const repeatNumber = repeatCounter === Infinity ? '∞' : repeatCounter;
 	const jobRatio = setting.jobratio;
@@ -773,8 +773,7 @@ function _runTributeFarm(setting, mapName, settingName, settingIndex) {
 	const shouldAtlantrimp = setting.atlantrimp && game.mapUnlocks.AncientTreasure.canRunOnce;
 	let tributeGoal = game.buildings.Tribute.locked === 1 ? 0 : setting.tributes;
 	let meteorologistGoal = game.jobs.Meteorologist.locked === 1 ? 0 : setting.mets;
-	let mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-	if (challengeActive('Wither') && mapLevel >= 0) mapLevel = -1;
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 	let totalCost = 0;
 
 	if (setting.mapType === 'Map Count') {
@@ -783,7 +782,7 @@ function _runTributeFarm(setting, mapName, settingName, settingIndex) {
 
 	const shouldMap = tributeGoal > game.buildings.Tribute.purchased || meteorologistGoal > game.jobs.Meteorologist.owned;
 
-	if (shouldMap && tributeGoal > game.buildings.Tribute.purchased && !getPageSetting('buildingsType')) buyTributes();
+	if (shouldMap && tributeGoal > game.buildings.Tribute.purchased && !getPageSetting('buildingsType')) _buyTribute();
 
 	//Figuring out if we have enough resources to run Atlantrimp when setting is enabled.
 	if (shouldAtlantrimp && shouldMap) {
@@ -966,8 +965,7 @@ function _smithyFarmCalculateGoal(setting, mapLevel, smithyGoal) {
 function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 	let shouldMap = false;
 	let mapSpecial = getAvailableSpecials('lmc', true);
-	let mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-	if (challengeActive('Wither') && mapLevel >= 0) mapLevel = -1;
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 	let smithyGoal = setting.repeat;
 	let biome = getBiome();
 	let jobRatio = [0, 0, 0, 0];
@@ -1089,9 +1087,7 @@ function _runWorshipperFarm(setting, mapName, settingName, settingIndex, default
 	const cacheTime = mapSpecial === 'lsc' ? 20 : 10;
 	const biome = getBiome(null, 'Sea');
 	const worshippersOwned = game.jobs.Worshipper.owned;
-	let mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
-
-	if (challengeActive('Wither') && mapLevel >= 0) mapLevel = -1;
+	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 
 	const checkShouldSkip = defaultSettings.shipSkipEnabled && worshippersOwned !== 50;
 	const skipIfAbove = game.jobs.Worshipper.getCost() * defaultSettings.shipskip;
@@ -1131,7 +1127,7 @@ function mapDestacking(lineCheck) {
 		mapName
 	};
 
-	if (challengeActive('Balance') || (challengeActive('Unbalance') && !getPageSetting('balance'))) return farmingDetails;
+	if ((challengeActive('Balance') || challengeActive('Unbalance')) && !getPageSetting('balance')) return farmingDetails;
 	if (challengeActive('Daily') && (!getPageSetting('bloodthirstDestack') || typeof game.global.dailyChallenge.bloodthirst === 'undefined')) return farmingDetails;
 	if (challengeActive('Storm') && !getPageSetting('storm')) return farmingDetails;
 
@@ -1355,15 +1351,16 @@ function _runPrestigeRaiding(setting, mapName, settingIndex, defaultSettings) {
 	let status = `Prestige Raiding: ${equipsToFarm} items remaining`;
 	if (mapSettings.prestigeFragMapBought) status = `Prestige Frag Farm to: ${mapSettings.totalMapCost ? prettify(mapSettings.totalMapCost) : '∞'}`;
 
-	const mapsToRun = game.global.mapsActive ? prestigesToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
-	const specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
+	const mapObj = getCurrentMapObject();
+	const mapsToRun = game.global.mapsActive ? prestigesToGet(mapObj.level, targetPrestige)[1] : Infinity;
+	const specialInMap = game.global.mapsActive && game.global.mapGridArray[mapObj.size - 2].special === targetPrestige;
 
-	const repeat = mapsToRun <= 1 || (specialInMap && mapsToRun === 2);
+	const repeat = !mapSettings.prestigeMapArray || mapsToRun <= 1 || (specialInMap && mapsToRun === 2);
 
 	if (mapSettings.prestigeMapArray && mapSettings.prestigeMapArray[0] !== undefined && shouldMap) {
 		const mapIndex = getMapIndex(mapSettings.prestigeMapArray[0]);
 		const mapOwned = game.global.mapsOwnedArray[mapIndex] === undefined;
-		const prestigesToGetZero = game.global.mapsActive && prestigesToGet(getCurrentMapObject().level)[0] === 0;
+		const prestigesToGetZero = game.global.mapsActive && prestigesToGet(mapObj.level)[0] === 0;
 
 		if (mapOwned || prestigesToGetZero) {
 			debug(`There was an error with your purchased map(s). Restarting the raiding procedure.`);
@@ -1403,15 +1400,15 @@ function prestigeRaidingMapping() {
 		if (!totalMapCost) mapSettings.totalMapCost = costAndSliders.cost;
 		if (!mapSliders) mapSettings.mapSliders = costAndSliders.sliders;
 	}
-
 	mapSettings.prestigeMapArray = prestigeMapArray || new Array(5);
 	mapSettings.prestigeFragMapBought = prestigeFragMapBought || false;
 
-	if (mapSliders && prestigeMapArray[0] === undefined) {
+	if (prestigeMapArray === undefined || prestigeMapArray[0] === undefined) {
 		if (totalMapCost < game.resources.fragments.owned) {
 			_handlePrestigeFragMapBought();
-		} else if (game.global.preMapsActive) {
-			fragmentFarm();
+		} else {
+			fragmentFarm(true);
+			console.log('here');
 			mapSettings.prestigeFragMapBought = true;
 		}
 	}
@@ -2603,7 +2600,7 @@ function _hypothermiaBuyPackrat() {
 }
 
 function _runHypothermia(setting, mapName, settingName, settingIndex) {
-	const bonfireGoal = setting.bonfire;
+	let bonfireGoal = setting.bonfire;
 	const mapSpecial = getAvailableSpecials('lwc', true);
 	const mapLevel = setting.autoLevel ? autoLevelCheck(mapName, mapSpecial, null, null) : setting.level;
 	const jobRatio = setting.jobratio;
@@ -2620,12 +2617,28 @@ function _runHypothermia(setting, mapName, settingName, settingIndex) {
 		bonfireCostTotal += game.buildings.Shed.cost.wood();
 	}
 
-	const shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
+	let shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
+
+	if (shouldMap && setting.mapCap && setting.mapCap > 0) {
+		const mapCap = mapSettings.mapName === mapName ? setting.mapCap - game.global.mapRunCounter : setting.mapCap;
+		if (typeof mapSettings.bonfire !== 'undefined') {
+			bonfireGoal = mapSettings.bonfire;
+		} else {
+			const resourcesGained = game.resources.wood.owned + resourcesFromMap('wood', mapSpecial, setting.jobratio, mapLevel, mapCap);
+			while (bonfireCostTotal < resourcesGained) {
+				bonfireCostTotal -= 1e10 * Math.pow(100, bonfireGoal);
+				bonfireGoal--;
+			}
+		}
+
+		shouldMap = bonfireGoal > game.challenges.Hypothermia.totalBonfires && bonfireCostTotal > game.resources.wood.owned;
+	}
+
 	const repeat = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMap_AT(simpleSeconds_AT('wood', 20, jobRatio), false, true, mapLevel) + game.resources.wood.owned > bonfireCostTotal;
 	const status = `Hypo Farming To: ${prettify(bonfireCostTotal)} wood`;
 
-	if (mapSettings.mapName === mapName && !shouldMap) {
-		mappingDetails(mapName, mapLevel, mapSpecial, bonfireCostTotal);
+	if (!shouldMap) {
+		if (mapSettings.mapName === mapName) mappingDetails(mapName, mapLevel, mapSpecial, bonfireCostTotal);
 		resetMapVars(setting, settingName);
 	}
 
@@ -2667,7 +2680,6 @@ function desolation(lineCheck, forceDestack) {
 	let sliders = [9, 9, 9];
 	let biome = getBiome();
 
-	//Forcing destack before doing any farmings.
 	if (forceDestack) {
 		destackZone = game.global.world;
 		destackStacks = 0;
@@ -2940,7 +2952,7 @@ function smithless(lineCheck) {
 
 	const zoneTime = getZoneMinutes();
 	const farmTime = getPageSetting('smithlessFarmTime');
-	const wantMapBonus = getPageSetting('smithlessMapBonus' && game.global.mapBonus !== 10);
+	const wantMapBonus = getPageSetting('smithlessMapBonus') && game.global.mapBonus !== 10;
 
 	const mapSpecial = getAvailableSpecials('lmc', true);
 	const mapLevel = autoLevelCheck(farmingDetails.mapName, mapSpecial, null, game.global.mapBonus !== 10 ? 0 : null);
@@ -2986,7 +2998,7 @@ function smithless(lineCheck) {
 	const damageTarget = enemyHealth / totalDmg;
 
 	let shouldMap = totalDmg < enemyHealth;
-	if (shouldMap && (zoneTime === 0 || (zoneTime > 0 && zoneTime >= farmTime)) && !wantMapBonus) shouldMap = false;
+	if (shouldMap && (farmTime === 0 || (farmTime > 0 && zoneTime >= farmTime)) && !wantMapBonus) shouldMap = false;
 
 	if (lineCheck && shouldMap) return (setting = { priority: Infinity });
 
@@ -3484,7 +3496,7 @@ function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
 	//Skips if past designated end zone
 	if (game.global.world > currSetting.endzone + zoneReduction) return false;
 
-	if (currSetting.maxvoidzone && game.global.world > currSetting.maxvoidzone + zoneReduction) return false;
+	if (currSetting.endzone && game.global.world > currSetting.endzone + zoneReduction) return false;
 	if (currSetting.bonebelow && game.permaBoneBonuses.boosts.charges <= currSetting.bonebelow) return false;
 
 	const liquified = liquifiedZone();
@@ -3618,14 +3630,13 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 			'Hits Survived Void': hdStats.hitsSurvivedVoid,
 			'Map Level': hdStats.autoLevel
 		};
-		message += ` Void maps were triggered by ${mapSettings.voidTrigger}.<br>\n`;
+		message += ` Void maps were triggered by ${mapSettings.voidTrigger}.`;
 
 		if (mapSettings.dropdown) {
+			message += `<br>\n`;
 			message += `${mapSettings.dropdown.name} (Start: ${prettify(mapSettings.dropdown.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown.name])})<br>\n`;
 			message += `${mapSettings.dropdown2.name} (Start: ${prettify(mapSettings.dropdown2.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown2.name])})`;
 		}
-
-		message += `).`;
 	} else if (mapName === 'Hits Survived') message += ` Finished with hits survived at ${prettify(whichHitsSurvived())}/${targetHitsSurvived()}.`;
 	else if (mapName === 'HD Farm' && extra !== null) message += ` Finished with a HD Ratio of ${extra.toFixed(2)}/${extra2.toFixed(2)}.`;
 	else if (mapName === 'HD Farm') message += ` Finished with an auto level of ${hdStats.autoLevel > 0 ? '+' : ''}${hdStats.autoLevel}.`;

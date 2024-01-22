@@ -63,13 +63,27 @@ offlineProgress.finish = function () {
 originalActivateClicked = activateClicked;
 activateClicked = function () {
 	downloadSave(true);
-	pushSpreadsheetData();
+	if (typeof pushData === 'function') pushData();
+	if (!MODULES.portal.dontPushData) pushSpreadsheetData();
 	autoUpgradeHeirlooms();
 	autoHeirlooms(true);
 	autoMagmiteSpender(true);
-	pushData();
 	originalActivateClicked(...arguments);
+	resetVarsZone(true);
 	_setButtonsPortal();
+	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
+		loadMutations(preset);
+		u2Mutations.closeTree();
+	}
+};
+
+originalCheckAchieve = checkAchieve;
+checkAchieve = function () {
+	if (arguments[0] === 'totalMaps') {
+		const mapObj = getCurrentMapObject();
+		mapObj.clears++;
+	}
+	originalCheckAchieve(...arguments);
 };
 
 //Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
@@ -320,7 +334,7 @@ function updateButtonColor(what, canAfford, isJob) {
 		swapClass('thingColor', className, elem);
 		return;
 	}
-	if (isJob && game.global.firing === true) {
+	if (isJob && game.global.firing) {
 		if (game.jobs[what].owned >= 1) {
 			//note for future self:
 			//if you need to add more states here, change these to use the swapClass func -grabz
